@@ -21,12 +21,14 @@ namespace WS {
         BitCursor(FILE* stream) : stream(stream) {}
     };
 
-    class ReadBitCursor : public BitCursor {
+    class BitReader : public BitCursor {
     private:
         size_t buffer_size = 0;
 
     public:
-        ReadBitCursor(FILE* stream) : BitCursor(stream) {}
+        BitReader(FILE* stream) : BitCursor(stream) {
+            buffer_size = fread(buffer, sizeof(block_t), BIN_BUFFER_CAPACITY, stream);
+        }
 
         block_t readBit() {
             block_t bit = (buffer[buffer_i] >> bit_i) & 1;
@@ -42,10 +44,6 @@ namespace WS {
             return bit;
         }
 
-        void init() {
-            buffer_size = fread(buffer, sizeof(block_t), BIN_BUFFER_CAPACITY, stream);
-        }
-
         void close() {
             fclose(stream);
         }
@@ -55,12 +53,12 @@ namespace WS {
         }
     };
 
-    class WriteBitCursor : public BitCursor {
+    class BitWriter : public BitCursor {
     private:
         block_t block = 0;
 
     public:
-        WriteBitCursor(FILE* stream) : BitCursor(stream) {}
+        BitWriter(FILE* stream) : BitCursor(stream) {}
 
         void writeBit(block_t bit) {
             if (bit_i < 0) {
@@ -88,7 +86,7 @@ namespace WS {
             return;
         }
         char in_buffer[WS_BUFFER_CAPACITY];
-        WriteBitCursor cursor(out);
+        BitWriter cursor(out);
 
         size_t in_size;
         while (in_size = fread(in_buffer, sizeof(char), WS_BUFFER_CAPACITY, in)) {
@@ -108,12 +106,11 @@ namespace WS {
         if (!in || !out) {
             return;
         }
-        ReadBitCursor cursor(in);
+        BitReader cursor(in);
         char out_buffer[WS_BUFFER_CAPACITY];
         int out_i = 0;
         bool has_prefix = false;
 
-        cursor.init();
         while (cursor.canRead()) {
             block_t bit = cursor.readBit();
             char token;
