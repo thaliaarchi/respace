@@ -99,39 +99,6 @@ namespace WS {
         }
         fwrite(out_buffer, sizeof(char), out_i, out);
     }
-
-    /**
-     * @param bit - must be 1 or 0
-     * @param blocks - buffer containing output
-     * @param bit_i - bit position to insert bit
-     * @param block_i - block to insert bit into
-     */
-    inline void setBit(block_t bit, block_t* blocks, int& bit_i, int& block_i) {
-        if (bit_i < 0) {
-            blocks[++block_i] = 0;
-            bit_i = 8 * sizeof(block_t) - 1;
-        }
-        blocks[block_i] |= bit << bit_i--;
-    }
-
-    // Simple version without file I/O or buffer resizing
-    void toBinary(const char* ws, block_t*& blocks, size_t& size) {
-        const int BUFFER_SIZE = 128; // Dummy value, must be large enough to fit entire output
-        blocks = new block_t[BUFFER_SIZE];
-        int block_i = 0;
-        int bit_i = 8 * sizeof(block_t) - 1;
-
-        blocks[0] = 0;
-        for (size_t i = 0; ws[i]; i++) {
-            switch (ws[i]) {
-            case '\t': setBit(1, blocks, bit_i, block_i); // Insert 10
-            case ' ': setBit(0, blocks, bit_i, block_i); break; // Insert 0
-            case '\n': setBit(1, blocks, bit_i, block_i); setBit(1, blocks, bit_i, block_i); // Insert 11
-            // Otherwise, ignore character
-            }
-        }
-        size = block_i + 1;
-    }
 }
 
 #endif

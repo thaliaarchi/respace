@@ -75,43 +75,9 @@ void fromBinary(const char* in, const char* out) {
     fclose(out_file);
 }
 
-#define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c"
-#define BYTE_TO_BINARY(byte)  \
-  (byte & 0x80 ? '1' : '0'), \
-  (byte & 0x40 ? '1' : '0'), \
-  (byte & 0x20 ? '1' : '0'), \
-  (byte & 0x10 ? '1' : '0'), \
-  (byte & 0x08 ? '1' : '0'), \
-  (byte & 0x04 ? '1' : '0'), \
-  (byte & 0x02 ? '1' : '0'), \
-  (byte & 0x01 ? '1' : '0') 
-
-void toBinaryASCII(const char* out, const char* ws) {
-    FILE* out_file = nullptr;
-    fopen_s(&out_file, out, "wb");
-    WS::block_t* binary = nullptr;
-    size_t size = 0;
-
-    WS::toBinary(ws, binary, size);
-
-    for (size_t i = 0; i < size; i++) {
-        fprintf(out_file, BYTE_TO_BINARY_PATTERN " ", BYTE_TO_BINARY(binary[i]));
-        if ((i + 1) % 6 == 0) {
-            fprintf(out_file, "\n");
-        }
-    }
-    fclose(out_file);
-}
-
 int main(int argc, char* argv[]) {
     assemble("hello-world.ws", "hello-world.wsa");
     toBinary("hello-world.ws", "hello-world.wsx");
     fromBinary("hello-world.wsx", "hello-world.wsx.ws");
-    toBinaryASCII("hello-world.wsb",
-        "   	 	 \n   	    	\n   		  	  \n   		 		  \n   			  	 \n   "
-        "		 				\n   	 	 			\n   	     \n   	 		  \n   		 "
-        "				\n   		 		  \n   		 		  \n   		  	 	\n   	  	   "
-        "\n	\n  	\n  	\n  	\n  	\n  	\n  	\n  	\n  	\n  	\n  	\n  "
-        "	\n  	\n  	\n  \n\n\n");
     return 0;
 }
