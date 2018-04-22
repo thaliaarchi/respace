@@ -75,20 +75,24 @@ namespace WS {
         int in_i = 0;
         int out_i = 0;
         int bit_i = 8 * sizeof(block_t) - 1;
+        bool has_prefix = false;
 
         size_t in_size;
         while (in_size = fread(in_buffer, sizeof(block_t), BIN_BUFFER_CAPACITY, in)) {
             while (in_i < in_size) {
+                block_t bit = getBit(bit_i, in_i, in_buffer, out);
                 char token;
-                if (getBit(bit_i, in_i, in_buffer, out)) {
-                    if (getBit(bit_i, in_i, in_buffer, out))
-                        token = '\n'; // Read 11
-                    else
-                        token = '\t'; // Read 10
+                if (has_prefix) { // [TAB] is 10, [LF] is 11
+                    token = bit ? '\n' : '\t';
                 }
-                else {
-                    token = ' '; // Read 0
+                else if (bit) {
+                    has_prefix = true;
+                    continue;
                 }
+                else { // [SPACE] is 0
+                    token = ' ';
+                }
+                has_prefix = false;
                 if (out_i >= WS_BUFFER_CAPACITY) {
                     fwrite(out_buffer, sizeof(char), WS_BUFFER_CAPACITY, out);
                     out_i = 0;
