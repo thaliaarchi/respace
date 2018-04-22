@@ -25,6 +25,50 @@ namespace WS {
         }
     };
 
+    class CharReader : public Cursor {
+    private:
+        size_t buffer_size = 0;
+
+    public:
+        CharReader(FILE* stream) : Cursor(stream, WS_BUFFER_CAPACITY) {
+            buffer_size = fread(buffer, sizeof(char), buffer_capacity, stream);
+        }
+
+        char readChar() {
+            if (buffer_i >= buffer_size) {
+                buffer_size = fread(buffer, sizeof(block_t), buffer_capacity, stream);
+                buffer_i = 0;
+            }
+            return buffer[buffer_i++];
+        }
+
+        void close() {
+            fclose(stream);
+        }
+
+        bool canRead() {
+            return this->buffer_size > 0;
+        }
+    };
+
+    class CharWriter : public Cursor {
+    public:
+        CharWriter(FILE* stream) : Cursor(stream, WS_BUFFER_CAPACITY) {}
+
+        void writeChar(char c) {
+            if (buffer_i >= buffer_capacity) {
+                fwrite(buffer, sizeof(block_t), buffer_capacity, stream);
+                buffer_i = 0;
+            }
+            buffer[buffer_i++] = c;
+        }
+
+        void close() {
+            fwrite(buffer, sizeof(block_t), buffer_i, stream);
+            fclose(stream);
+        }
+    };
+
     // Manages reading and writing of binary files bit by bit
     class BitCursor : public Cursor {
     protected:
@@ -98,54 +142,45 @@ namespace WS {
         if (!in || !out) {
             return;
         }
-        char in_buffer[WS_BUFFER_CAPACITY];
-        BitWriter cursor(out);
+        CharReader reader(in);
+        BitWriter writer(out);
 
-        size_t in_size;
-        while (in_size = fread(in_buffer, sizeof(char), WS_BUFFER_CAPACITY, in)) {
-            for (size_t i = 0; i < in_size; i++) {
-                switch (in_buffer[i]) {
-                case '\t': cursor.writeBit(1); // Insert 10
-                case ' ': cursor.writeBit(0); break; // Insert 0
-                case '\n': cursor.writeBit(1); cursor.writeBit(1); // Insert 11
-                // Otherwise, ignore character
-                }
+        while (reader.canRead()) {
+            switch (reader.readChar()) {
+            case '\t': writer.writeBit(1); // Insert 10
+            case ' ': writer.writeBit(0); break; // Insert 0
+            case '\n': writer.writeBit(1); writer.writeBit(1); // Insert 11
+            // Otherwise, ignore character
             }
         }
-        cursor.close();
+
+        reader.close();
+        writer.close();
     }
 
     void fromBinary(FILE* in, FILE* out) {
         if (!in || !out) {
             return;
         }
-        BitReader cursor(in);
-        char out_buffer[WS_BUFFER_CAPACITY];
-        int out_i = 0;
-        bool has_prefix = false;
+        BitReader reader(in);
+        CharWriter writer(out);
 
-        while (cursor.canRead()) {
-            block_t bit = cursor.readBit();
-            char token;
-            if (has_prefix) { // [TAB] is 10, [LF] is 11
-                token = bit ? '\n' : '\t';
+        while (reader.canRead()) {
+            if (reader.readBit()) {
+                if (!reader.canRead())
+                    break;
+                if (reader.readBit())
+                    writer.writeChar('\n'); // [LF] is 11
+                else
+                    writer.writeChar('\t'); // [TAB] is 10
             }
-            else if (bit) {
-                has_prefix = true;
-                continue;
+            else {
+                writer.writeChar(' '); // [SPACE] is 0
             }
-            else { // [SPACE] is 0
-                token = ' ';
-            }
-            has_prefix = false;
-            if (out_i >= WS_BUFFER_CAPACITY) {
-                fwrite(out_buffer, sizeof(char), WS_BUFFER_CAPACITY, out);
-                out_i = 0;
-            }
-            out_buffer[out_i] = token;
-            out_i++;
         }
-        fwrite(out_buffer, sizeof(char), out_i, out);
+        
+        reader.close();
+        writer.close();
     }
 }
 
