@@ -60,8 +60,6 @@ void toBinary(const char* in, const char* out) {
     fopen_s(&out_file, out, "wb");
 
     WS::toBinary(in_file, out_file);
-    fclose(in_file);
-    fclose(out_file);
 }
 
 void fromBinary(const char* in, const char* out) {
@@ -71,8 +69,6 @@ void fromBinary(const char* in, const char* out) {
     fopen_s(&out_file, out, "w");
 
     WS::fromBinary(in_file, out_file);
-    fclose(in_file);
-    fclose(out_file);
 }
 
 int main(int argc, char* argv[]) {
