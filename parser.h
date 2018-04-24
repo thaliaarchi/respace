@@ -61,11 +61,11 @@ namespace WS {
         size_t col_ = 0;
         bool isEOF_ = false;
 
-        Instruction parseStackInstr();
-        Instruction parseArithInstr();
-        Instruction parseHeapInstr();
-        Instruction parseFlowInstr();
-        Instruction parseIOInstr();
+        Instruction parseStack();
+        Instruction parseArith();
+        Instruction parseHeap();
+        Instruction parseFlow();
+        Instruction parseIO();
 
         char nextChar();
         int readNumber();

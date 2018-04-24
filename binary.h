@@ -32,11 +32,16 @@ namespace WS {
         }
         Reader reader(in, BIN_BUFFER_CAPACITY);
         Writer writer(out, WS_BUFFER_CAPACITY);
-        
-        char c;
+
         while (reader.canRead()) {
-            if ((c = reader.readBinaryToken()) != EOF) {
-                writer.writeBlock(c);
+            if (reader.readBit()) {
+                if (!reader.canRead()) {
+                    break;
+                }
+                writer.writeBlock(reader.readBit() ? '\n' : '\t'); // [LF] is read as 11, [TAB] is read as 10
+            }
+            else {
+                writer.writeBlock(' '); // [SPACE] is read as 0
             }
         }
         

@@ -6,15 +6,15 @@ namespace WS {
     Instruction Parser::next() {
         char c;
         switch (c = this->nextChar()) {
-        case ' ': return this->parseStackInstr();     // [Space]      Stack Manipulation
+        case ' ': return this->parseStack();     // [Space]      Stack Manipulation
         case '\t':
             switch (c = this->nextChar()) {
-            case ' ': return this->parseArithInstr(); // [Tab][Space] Arithmetic
-            case '\t': return this->parseHeapInstr(); // [Tab][Tab]   Heap Access
-            case '\n': return this->parseIOInstr();   // [Tab][LF]    I/O
+            case ' ': return this->parseArith(); // [Tab][Space] Arithmetic
+            case '\t': return this->parseHeap(); // [Tab][Tab]   Heap Access
+            case '\n': return this->parseIO();   // [Tab][LF]    I/O
             }
             break;
-        case '\n': return this->parseFlowInstr();     // [LF]         Flow Control
+        case '\n': return this->parseFlow();     // [LF]         Flow Control
         }
         if (c == EOF) {
             this->isEOF_ = true;
@@ -37,7 +37,7 @@ namespace WS {
 
     // Private
 
-    Instruction Parser::parseStackInstr() {
+    Instruction Parser::parseStack() {
         switch (this->nextChar()) {
         case ' ': return Instruction(PUSH, this->readNumber());
         case '\t': throw this->badCharException();
@@ -51,7 +51,7 @@ namespace WS {
         throw this->unexpectedException();
     }
 
-    Instruction Parser::parseArithInstr() {
+    Instruction Parser::parseArith() {
         switch (this->nextChar()) {
         case ' ':
             switch (this->nextChar()) {
@@ -72,7 +72,7 @@ namespace WS {
         throw this->unexpectedException();
     }
 
-    Instruction Parser::parseHeapInstr() {
+    Instruction Parser::parseHeap() {
         switch (this->nextChar()) {
         case ' ': return Instruction(STORE);
         case '\t': return Instruction(RETRIEVE);
@@ -81,7 +81,7 @@ namespace WS {
         throw this->unexpectedException();
     }
 
-    Instruction Parser::parseFlowInstr() {
+    Instruction Parser::parseFlow() {
         switch (this->nextChar()) {
         case ' ':
             switch (this->nextChar()) {
@@ -107,7 +107,7 @@ namespace WS {
         throw this->unexpectedException();
     }
 
-    Instruction Parser::parseIOInstr() {
+    Instruction Parser::parseIO() {
         switch (this->nextChar()) {
         case ' ':
             switch (this->nextChar()) {

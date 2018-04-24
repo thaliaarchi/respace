@@ -10,7 +10,6 @@ namespace WS {
 
         block_t readBlock();
         block_t readBit();
-        char readBinaryToken();
         bool canRead();
         void close();
 
