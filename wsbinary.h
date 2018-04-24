@@ -24,7 +24,6 @@ namespace WS {
             buffer(new block_t[buffer_capacity]), buffer_capacity(buffer_capacity) {}
 
     public:
-
         ~BufferIO() {
             delete[] buffer;
         }
@@ -96,14 +95,13 @@ namespace WS {
             bit_block |= bit << bit_i--;
         }
 
+        void flushBits() {
+            buffer[buffer_i++] = bit_block;
+        }
+
         void close() {
             writeBuffer(buffer_i);
             fclose(stream);
-        }
-        
-        void bitClose() {
-            buffer[buffer_i++] = bit_block;
-            close();
         }
     };
 
@@ -123,8 +121,9 @@ namespace WS {
             }
         }
 
+        writer.flushBits();
         reader.close();
-        writer.bitClose();
+        writer.close();
     }
 
     void fromBinary(FILE* in, FILE* out) {
