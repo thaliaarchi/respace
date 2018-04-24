@@ -15,7 +15,7 @@ namespace WS {
         block_t* buffer_;
         const size_t buffer_capacity_;
         size_t buffer_size_ = 0;
-        int buffer_i_ = 0;
+        size_t buffer_i_ = 0;
         block_t bit_block_ = 0;
         int bit_i_ = HIGH_BIT_;
         static const int HIGH_BIT_ = 8 * sizeof(block_t) - 1;

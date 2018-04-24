@@ -1,7 +1,7 @@
 #include <cstdio>
 #include <bitset>
-#include "wsparser.h"
-#include "wsbinary.h"
+#include "parser.h"
+#include "binary.h"
 
 void assemble(const char* in, const char* out) {
     FILE* in_file = nullptr;

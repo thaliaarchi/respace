@@ -20,6 +20,20 @@ namespace WS {
         return (buffer_[buffer_i_] >> bit_i_--) & 1;
     }
 
+    char Reader::readBinaryToken() {
+        if (readBit()) {
+            if (!canRead())
+                return EOF;
+            if (readBit())
+                return '\n'; // [LF] is read as 11
+            else
+                return '\t'; // [TAB] is read as 10
+        }
+        else {
+            return ' '; // [SPACE] is read as 0
+        }
+    }
+
     bool Reader::canRead() {
         if (buffer_i_ >= buffer_size_ && buffer_size_ > 0) {
             return readBuffer() > 0;
