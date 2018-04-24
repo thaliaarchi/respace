@@ -1,36 +1,36 @@
 #include "writer.h"
 
 namespace WS {
-    Writer::Writer(FILE* stream, size_t capacity) : BufferIO(stream, capacity) {}
+    Writer::Writer(FILE* stream, size_t buffer_capacity) : BufferIO(stream, buffer_capacity) {}
 
     void Writer::writeBlock(block_t block) {
-        if (buffer_i >= buffer_capacity) {
-            writeBuffer(buffer_capacity);
+        if (buffer_i_ >= buffer_capacity_) {
+            writeBuffer(buffer_capacity_);
         }
-        bit_i = HIGH_BIT;
-        buffer[buffer_i++] = block;
+        bit_i_ = HIGH_BIT_;
+        buffer_[buffer_i_++] = block;
     }
 
     void Writer::writeBit(block_t bit) {
-        if (bit_i < 0) {
-            writeBlock(bit_block);
-            bit_block = 0;
+        if (bit_i_ < 0) {
+            writeBlock(bit_block_);
+            bit_block_ = 0;
         }
-        bit_block |= bit << bit_i--;
+        bit_block_ |= bit << bit_i_--;
     }
 
     void Writer::flushBits() {
-        buffer[buffer_i++] = bit_block;
+        buffer_[buffer_i_++] = bit_block_;
     }
 
     void Writer::close() {
-        writeBuffer(buffer_i);
-        fclose(stream);
+        writeBuffer(buffer_i_);
+        fclose(stream_);
     }
 
     // Private
     void Writer::writeBuffer(size_t size) {
-        fwrite(buffer, sizeof(block_t), size, stream);
-        buffer_i = 0;
+        fwrite(buffer_, sizeof(block_t), size, stream_);
+        buffer_i_ = 0;
     }
 }

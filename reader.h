@@ -1,12 +1,12 @@
-#ifndef WS_READER_H
-#define WS_READER_H
+#ifndef WS_READER_H_
+#define WS_READER_H_
 
 #include "bufferio.h"
 
 namespace WS {
     class Reader : public BufferIO {
     public:
-        Reader(FILE* stream, size_t capacity);
+        Reader(FILE* stream, size_t buffer_capacity);
 
         block_t readBlock();
         block_t readBit();

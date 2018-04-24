@@ -1,5 +1,5 @@
-#ifndef WS_LEXER_H
-#define WS_LEXER_H
+#ifndef WS_PARSER_H_
+#define WS_PARSER_H_
 
 #include <cstdio>
 
@@ -38,7 +38,9 @@ namespace WS {
     struct Instruction {
         InstructionType type;
         long long value;
+
         Instruction(InstructionType type = ERROR, long long value = NULL) : type(type), value(value) {}
+
         operator int() const { // To allow instruction to be used as condition in while
             return this->type;
         }
@@ -48,12 +50,13 @@ namespace WS {
         const char* msg;
         const size_t line;
         const size_t col;
+
         ParseException(const char* msg, size_t line, size_t col) : msg(msg), line(line), col(col) {}
     };
 
     class Parser {
     private:
-        FILE* stream;
+        FILE* stream_;
         size_t line = 1;
         size_t col = 0;
         bool isEOF_ = false;
@@ -153,7 +156,7 @@ namespace WS {
             char c;
             do {
                 this->col++;
-                switch (c = getc(this->stream)) {
+                switch (c = getc(this->stream_)) {
                 case ' ':
                 case '\t':
                     return c;
@@ -163,7 +166,7 @@ namespace WS {
                     return c;
                 }
             } while (c != EOF);
-            if (ferror(this->stream)) {
+            if (ferror(this->stream_)) {
                 throw this->unexpectedException();
             }
             this->isEOF_ = true;
@@ -203,7 +206,7 @@ namespace WS {
             return ParseException("Invalid character encountered.", this->line, this->col);
         }
     public:
-        Parser(FILE* stream) : stream(stream) {}
+        Parser(FILE* stream) : stream_(stream) {}
 
         Instruction next() {
             char c;

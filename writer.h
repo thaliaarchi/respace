@@ -1,12 +1,12 @@
-#ifndef WS_WRITER_H
-#define WS_WRITER_H
+#ifndef WS_WRITER_H_
+#define WS_WRITER_H_
 
 #include "bufferio.h"
 
 namespace WS {
     class Writer : public BufferIO {
     public:
-        Writer(FILE* stream, size_t capacity);
+        Writer(FILE* stream, size_t buffer_capacity);
 
         void writeBlock(block_t block);
         void writeBit(block_t bit);

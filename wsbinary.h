@@ -1,5 +1,5 @@
-#ifndef WS_BINARY_H
-#define WS_BINARY_H
+#ifndef WS_BINARY_H_
+#define WS_BINARY_H_
 
 #include "reader.h"
 #include "writer.h"

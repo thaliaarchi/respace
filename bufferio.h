@@ -1,5 +1,5 @@
-#ifndef WS_BUFFER_IO_H
-#define WS_BUFFER_IO_H
+#ifndef WS_BUFFER_IO_H_
+#define WS_BUFFER_IO_H_
 
 #include <cstdio>
 #include <cstdint>
@@ -11,24 +11,23 @@ namespace WS {
 
     class BufferIO {
     protected:
-        FILE * stream;
-        block_t* buffer;
-        const size_t buffer_capacity;
-        size_t buffer_size = 0;
-        int buffer_i = 0;
-        block_t bit_block = 0;
-        int bit_i = HIGH_BIT;
-        static const int HIGH_BIT = 8 * sizeof(block_t) - 1;
+        FILE * stream_;
+        block_t* buffer_;
+        const size_t buffer_capacity_;
+        size_t buffer_size_ = 0;
+        int buffer_i_ = 0;
+        block_t bit_block_ = 0;
+        int bit_i_ = HIGH_BIT_;
+        static const int HIGH_BIT_ = 8 * sizeof(block_t) - 1;
 
-        BufferIO(FILE* stream, size_t buffer_capacity) : stream(stream),
-            buffer(new block_t[buffer_capacity]), buffer_capacity(buffer_capacity) {}
+        BufferIO(FILE* stream, size_t buffer_capacity) : stream_(stream),
+            buffer_(new block_t[buffer_capacity]), buffer_capacity_(buffer_capacity) {}
 
     public:
         ~BufferIO() {
-            delete[] buffer;
+            delete[] buffer_;
         }
     };
 }
-
 
 #endif
