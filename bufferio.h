@@ -10,8 +10,13 @@ namespace WS {
     const size_t BIN_BUFFER_CAPACITY = WS_BUFFER_CAPACITY / 4;
 
     class BufferIO {
+    public:
+        ~BufferIO() {
+            delete[] buffer_;
+        }
+
     protected:
-        FILE * stream_;
+        FILE* stream_;
         block_t* buffer_;
         const size_t buffer_capacity_;
         size_t buffer_size_ = 0;
@@ -22,11 +27,6 @@ namespace WS {
 
         BufferIO(FILE* stream, size_t buffer_capacity) : stream_(stream),
             buffer_(new block_t[buffer_capacity]), buffer_capacity_(buffer_capacity) {}
-
-    public:
-        ~BufferIO() {
-            delete[] buffer_;
-        }
     };
 }
 

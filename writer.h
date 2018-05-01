@@ -8,7 +8,7 @@ namespace WS {
     public:
         Writer(FILE* stream, size_t buffer_capacity);
 
-        void writeBlock(block_t block);
+        void write(block_t block);
         void writeBit(block_t bit);
         void flushBits();
         void close();

@@ -8,9 +8,9 @@ namespace WS {
     public:
         Reader(FILE* stream, size_t buffer_capacity);
 
-        block_t readBlock();
-        block_t readBit();
-        bool canRead();
+        block_t next();
+        block_t nextBit();
+        bool hasNext();
         void close();
 
     private:

@@ -5,180 +5,180 @@ namespace WS {
 
     Instruction Parser::next() {
         char c;
-        switch (c = this->nextChar()) {
-        case ' ': return this->parseStack();     // [Space]      Stack Manipulation
+        switch (c = nextChar()) {
+        case ' ': return parseStack();     // [Space]      Stack Manipulation
         case '\t':
-            switch (c = this->nextChar()) {
-            case ' ': return this->parseArith(); // [Tab][Space] Arithmetic
-            case '\t': return this->parseHeap(); // [Tab][Tab]   Heap Access
-            case '\n': return this->parseIO();   // [Tab][LF]    I/O
+            switch (c = nextChar()) {
+            case ' ': return parseArith(); // [Tab][Space] Arithmetic
+            case '\t': return parseHeap(); // [Tab][Tab]   Heap Access
+            case '\n': return parseIO();   // [Tab][LF]    I/O
             }
             break;
-        case '\n': return this->parseFlow();     // [LF]         Flow Control
+        case '\n': return parseFlow();     // [LF]         Flow Control
         }
         if (c == EOF) {
-            this->isEOF_ = true;
-            return Instruction(ERROR);
+            isEOF_ = true;
+            return INVALID_INSTR;
         }
-        throw this->unexpectedException();
+        throw unexpectedException();
     }
 
     bool Parser::next(Instruction& instr) {
-        instr = this->next();
-        if (instr.type == ERROR) {
+        instr = next();
+        if (instr.type == INVALID_INSTR) {
             return false;
         }
         return true;
     }
 
     bool Parser::isEOF() const {
-        return this->isEOF_;
+        return isEOF_;
     }
 
     // Private
 
     Instruction Parser::parseStack() {
-        switch (this->nextChar()) {
-        case ' ': return Instruction(PUSH, this->readNumber());
-        case '\t': throw this->badCharException();
+        switch (nextChar()) {
+        case ' ': return Instruction(PUSH, readInteger());
+        case '\t': return INVALID_INSTR;
         case '\n':
-            switch (this->nextChar()) {
-            case ' ': return Instruction(DUP);
-            case '\t': return Instruction(SWAP);
-            case '\n': return Instruction(DROP);
+            switch (nextChar()) {
+            case ' ': return DUP;
+            case '\t': return SWAP;
+            case '\n': return DROP;
             }
         }
-        throw this->unexpectedException();
+        throw unexpectedException();
     }
 
     Instruction Parser::parseArith() {
-        switch (this->nextChar()) {
+        switch (nextChar()) {
         case ' ':
-            switch (this->nextChar()) {
-            case ' ': return Instruction(ADD);
-            case '\t': return Instruction(SUB);
-            case '\n': return Instruction(MUL);
+            switch (nextChar()) {
+            case ' ': return ADD;
+            case '\t': return SUB;
+            case '\n': return MUL;
             }
             break;
         case '\t':
-            switch (this->nextChar()) {
-            case ' ': return Instruction(DIV);
-            case '\t': return Instruction(MOD);
-            case '\n': throw this->badCharException();
+            switch (nextChar()) {
+            case ' ': return DIV;
+            case '\t': return MOD;
+            case '\n': return INVALID_INSTR; // throw badCharException();
             }
             break;
-        case '\n': throw this->badCharException();
+        case '\n': return INVALID_INSTR; // throw badCharException();
         }
-        throw this->unexpectedException();
+        throw unexpectedException();
     }
 
     Instruction Parser::parseHeap() {
-        switch (this->nextChar()) {
-        case ' ': return Instruction(STORE);
-        case '\t': return Instruction(RETRIEVE);
-        case '\n': throw this->badCharException();
+        switch (nextChar()) {
+        case ' ': return STORE;
+        case '\t': return RETRIEVE;
+        case '\n': return INVALID_INSTR; // throw badCharException();
         }
-        throw this->unexpectedException();
+        throw unexpectedException();
     }
 
     Instruction Parser::parseFlow() {
-        switch (this->nextChar()) {
+        switch (nextChar()) {
         case ' ':
-            switch (this->nextChar()) {
-            case ' ': return Instruction(LABEL, this->readLabel());
-            case '\t': return Instruction(CALL, this->readLabel());
-            case '\n': return Instruction(JMP, this->readLabel());
+            switch (nextChar()) {
+            case ' ': return Instruction(LABEL, readUnsignedInteger());
+            case '\t': return Instruction(CALL, readUnsignedInteger());
+            case '\n': return Instruction(JMP, readUnsignedInteger());
             }
             break;
         case '\t':
-            switch (this->nextChar()) {
-            case ' ': return Instruction(JZ, this->readLabel());
-            case '\t': return Instruction(JN, this->readLabel());
-            case '\n': return Instruction(RET);
+            switch (nextChar()) {
+            case ' ': return Instruction(JZ, readUnsignedInteger());
+            case '\t': return Instruction(JN, readUnsignedInteger());
+            case '\n': return RET;
             }
             break;
         case '\n':
-            switch (this->nextChar()) {
+            switch (nextChar()) {
             case ' ':
-            case '\t': throw this->badCharException();
-            case '\n': return Instruction(END);
+            case '\t': return INVALID_INSTR; // throw badCharException();
+            case '\n': return END;
             }
         }
-        throw this->unexpectedException();
+        throw unexpectedException();
     }
 
     Instruction Parser::parseIO() {
-        switch (this->nextChar()) {
+        switch (nextChar()) {
         case ' ':
-            switch (this->nextChar()) {
-            case ' ': return Instruction(PRINTC);
-            case '\t': return Instruction(PRINTI);
-            case '\n': throw this->badCharException();
+            switch (nextChar()) {
+            case ' ': return PRINTC;
+            case '\t': return PRINTI;
+            case '\n': return INVALID_INSTR; // throw badCharException();
             }
             break;
         case '\t':
-            switch (this->nextChar()) {
-            case ' ': return Instruction(READC);
-            case '\t': return Instruction(READI);
-            case '\n': throw this->badCharException();
+            switch (nextChar()) {
+            case ' ': return READC;
+            case '\t': return READI;
+            case '\n': return INVALID_INSTR; // throw badCharException();
             }
             break;
-        case '\n': throw this->badCharException();
+        case '\n': return INVALID_INSTR; // throw badCharException();
         }
-        throw this->unexpectedException();
+        throw unexpectedException();
     }
 
     char Parser::nextChar() {
         char c;
         do {
-            this->col_++;
-            switch (c = getc(this->stream_)) {
+            col_++;
+            switch (c = getc(stream_)) {
             case ' ':
             case '\t':
                 return c;
             case '\n':
-                this->line_++;
-                this->col_ = 0;
+                line_++;
+                col_ = 0;
                 return c;
             }
         } while (c != EOF);
-        if (ferror(this->stream_)) {
-            throw this->unexpectedException();
+        if (ferror(stream_)) {
+            throw unexpectedException();
         }
-        this->isEOF_ = true;
+        isEOF_ = true;
         return EOF;
     }
 
-    int Parser::readNumber() {
-        int sign;
-        switch (this->nextChar()) {
+    integer_t Parser::readInteger() {
+        integer_t sign;
+        switch (nextChar()) {
         case ' ': sign = 1; break;
         case '\t': sign = -1; break;
-        case '\n': throw this->badCharException();
-        default: throw this->unexpectedException();
+        case '\n': throw badCharException();
+        default: throw unexpectedException();
         }
-        return sign * this->readLabel();
+        return sign * readUnsignedInteger();
     }
 
-    unsigned Parser::readLabel() {
-        int number = 0;
+    integer_t Parser::readUnsignedInteger() {
+        integer_t number = 0;
         while (true) {
-            switch (this->nextChar()) {
+            switch (nextChar()) {
             case ' ': number <<= 1; continue;
             case '\t': number = (number << 1) + 1; continue;
             case '\n': return number;
             case EOF: throw "Unterminated number";
-            default: throw this->unexpectedException();
+            default: throw unexpectedException();
             }
         }
-        throw this->unexpectedException();
+        throw unexpectedException();
     }
 
     ParseException Parser::unexpectedException() const {
-        return ParseException("An unexpected error occurred.", this->line_, this->col_);
+        return ParseException("An unexpected error occurred.", line_, col_);
     }
 
     ParseException Parser::badCharException() const {
-        return ParseException("Invalid character encountered.", this->line_, this->col_);
+        return ParseException("Invalid character encountered.", line_, col_);
     }
 }

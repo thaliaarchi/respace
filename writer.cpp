@@ -3,7 +3,7 @@
 namespace WS {
     Writer::Writer(FILE* stream, size_t buffer_capacity) : BufferIO(stream, buffer_capacity) {}
 
-    void Writer::writeBlock(block_t block) {
+    void Writer::write(block_t block) {
         if (buffer_i_ >= buffer_capacity_) {
             writeBuffer(buffer_capacity_);
         }
@@ -13,7 +13,7 @@ namespace WS {
 
     void Writer::writeBit(block_t bit) {
         if (bit_i_ < 0) {
-            writeBlock(bit_block_);
+            write(bit_block_);
             bit_block_ = 0;
         }
         bit_block_ |= bit << bit_i_--;

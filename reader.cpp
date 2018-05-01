@@ -5,7 +5,7 @@ namespace WS {
         readBuffer();
     }
 
-    block_t Reader::readBlock() {
+    block_t Reader::next() {
         if (buffer_i_ >= buffer_size_) {
             readBuffer();
         }
@@ -13,14 +13,14 @@ namespace WS {
         return buffer_[buffer_i_++];
     }
 
-    block_t Reader::readBit() {
+    block_t Reader::nextBit() {
         if (bit_i_ < 0) { // All bits in current block read
-            readBlock(); // Advance to next block
+            next(); // Advance to next block
         }
         return (buffer_[buffer_i_] >> bit_i_--) & 1;
     }
 
-    bool Reader::canRead() {
+    bool Reader::hasNext() {
         if (buffer_i_ >= buffer_size_ && buffer_size_ > 0) {
             return readBuffer() > 0;
         }
