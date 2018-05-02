@@ -7,10 +7,8 @@
 #include "binary.h"
 
 void assemble(const char* in, const char* out) {
-    FILE* in_file = nullptr;
-    FILE* out_file = nullptr;
-    fopen_s(&in_file, in, "r");
-    fopen_s(&out_file, out, "w");
+    FILE* in_file = fopen(in, "r");
+    FILE* out_file = fopen(out, "w");
 
     WS::Parser parser(in_file);
 
@@ -214,20 +212,14 @@ void assemble(const char* in, const char* out) {
 }
 
 void toBinary(const char* in, const char* out) {
-    FILE* in_file = nullptr;
-    FILE* out_file = nullptr;
-    fopen_s(&in_file, in, "r");
-    fopen_s(&out_file, out, "wb");
-
+    FILE* in_file = fopen(in, "r");
+    FILE* out_file = fopen(out, "wb");
     WS::toBinary(in_file, out_file);
 }
 
 void fromBinary(const char* in, const char* out) {
-    FILE* in_file = nullptr;
-    FILE* out_file = nullptr;
-    fopen_s(&in_file, in, "rb");
-    fopen_s(&out_file, out, "w");
-
+    FILE* in_file = fopen(in, "rb");
+    FILE* out_file = fopen(out, "w");
     WS::fromBinary(in_file, out_file);
 }
 
