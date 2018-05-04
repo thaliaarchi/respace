@@ -13,13 +13,11 @@ void assemble(const char* in, const char* out) {
     FILE* out_file = fopen(out, "w");
 
     Parser parser(in_file);
-    std::vector<Instruction> instructions;
 
     Instruction instr;
     while (!parser.isEOF()) {
         try {
             parser.next(instr);
-            instructions.push_back(instr);
         }
         catch (ParseException e) {
             fprintf(out_file, "\tL%d:C%d %s\n", e.line, e.col, e.what);
@@ -57,7 +55,16 @@ void assemble(const char* in, const char* out) {
         }
         fputc('\n', out_file);
     }
+}
 
+void interpret(const char* in) {
+    FILE* in_file = fopen(in, "r");
+    Parser parser(in_file);
+    std::vector<Instruction> instructions;
+    Instruction instr;
+    while (parser.next(instr)) {
+        instructions.push_back(instr);
+    }
     VM vm(instructions);
     vm.execute();
 }
@@ -151,6 +158,7 @@ int main(int argc, char* argv[]) {
     assemble("hello-world.ws", "hello-world.wsa");
     toBinary("hello-world.ws", "hello-world.wsx");
     fromBinary("hello-world.wsx", "hello-world.wsx.ws");
+    interpret("hello-world.ws");
     bottles();
     count(1, 10);
     system("pause");
