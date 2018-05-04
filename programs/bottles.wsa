@@ -1,0 +1,59 @@
+    push 0
+    push ' '
+    store
+    push 1
+    push 'b'
+    store
+    push 2
+    push 'o'
+    store
+    push 3
+    push 't'
+    store
+    push 4
+    push 't'
+    store
+    push 5
+    push 'l'
+    store
+    push 6
+    push 'e'
+    store
+    push 7
+    push 's'
+    store
+    push 8
+    push '\n'
+    store
+    push 9
+    push 0
+    store
+
+    push 99
+label_0:
+    dup
+    printi
+
+    push 0
+label_1:
+    dup
+    retrieve
+    dup
+    jz label_2
+    printc
+    push 1
+    add
+    jmp label_1
+
+label_2:
+    drop
+    drop
+    push 1
+    sub
+    dup
+    jn label_3
+    jmp label_0
+
+label_3:
+    drop
+    end
