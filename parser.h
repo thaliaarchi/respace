@@ -5,49 +5,6 @@
 #include "constants.h"
 
 namespace WS {
-    enum InstructionType {
-        // Stack Manipulation
-        PUSH,   // Push the number onto the stack
-        DUP,    // Duplicate the top item on the stack
-        SWAP,   // Swap the top two items on the stack
-        DROP,   // Discard the top item on the stack
-        // Arithmetic
-        ADD,    // Addition
-        SUB,    // Subtraction
-        MUL,    // Multiplication
-        DIV,    // Integer division
-        MOD,    // Modulo
-        // Heap Access
-        STORE,  // Store
-        RETRIEVE, // Retrieve
-        // Flow Control
-        LABEL,  // Mark a location in the program
-        CALL,   // Call a subroutine
-        JMP,    // Jump unconditionally to a label
-        JZ,     // Jump to a label if the top of the stack is zero
-        JN,     // Jump to a label if the top of the stack is negative
-        RET,    // End a subroutine and transfer control back to the caller
-        END,    // End the program
-        // I/O
-        PRINTC, // Output the character at the top of the stack
-        PRINTI, // Output the number at the top of the stack
-        READC,  // Read a character and place it in the location given by the top of the stack
-        READI,  // Read a number and place it in the location given by the top of the stack
-        // Invalid Instruction
-        INVALID_INSTR = -1
-    };
-
-    struct Instruction {
-        InstructionType type;
-        integer_t value;
-
-        Instruction(InstructionType type = INVALID_INSTR, integer_t value = NULL) : type(type), value(value) {}
-
-        operator int() const { // To allow instruction to be used as condition in while
-            return this->type;
-        }
-    };
-
     struct ParseException {
         const char* what;
         const size_t line;

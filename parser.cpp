@@ -40,7 +40,13 @@ namespace WS {
     Instruction Parser::parseStack() {
         switch (nextChar()) {
         case ' ': return Instruction(PUSH, readInteger());
-        case '\t': return INVALID_INSTR;
+        case '\t':
+            switch (nextChar()) {
+            case ' ': return COPY;
+            case '\t': return INVALID_INSTR;
+            case '\n': return SLIDE;
+            }
+            break;
         case '\n':
             switch (nextChar()) {
             case ' ': return DUP;
@@ -64,10 +70,10 @@ namespace WS {
             switch (nextChar()) {
             case ' ': return DIV;
             case '\t': return MOD;
-            case '\n': return INVALID_INSTR; // throw badCharException();
+            case '\n': return INVALID_INSTR;
             }
             break;
-        case '\n': return INVALID_INSTR; // throw badCharException();
+        case '\n': return INVALID_INSTR;
         }
         throw unexpectedException();
     }
@@ -76,7 +82,7 @@ namespace WS {
         switch (nextChar()) {
         case ' ': return STORE;
         case '\t': return RETRIEVE;
-        case '\n': return INVALID_INSTR; // throw badCharException();
+        case '\n': return INVALID_INSTR;
         }
         throw unexpectedException();
     }
@@ -100,7 +106,7 @@ namespace WS {
         case '\n':
             switch (nextChar()) {
             case ' ':
-            case '\t': return INVALID_INSTR; // throw badCharException();
+            case '\t': return INVALID_INSTR;
             case '\n': return END;
             }
         }
@@ -113,17 +119,17 @@ namespace WS {
             switch (nextChar()) {
             case ' ': return PRINTC;
             case '\t': return PRINTI;
-            case '\n': return INVALID_INSTR; // throw badCharException();
+            case '\n': return INVALID_INSTR;
             }
             break;
         case '\t':
             switch (nextChar()) {
             case ' ': return READC;
             case '\t': return READI;
-            case '\n': return INVALID_INSTR; // throw badCharException();
+            case '\n': return INVALID_INSTR;
             }
             break;
-        case '\n': return INVALID_INSTR; // throw badCharException();
+        case '\n': return INVALID_INSTR;
         }
         throw unexpectedException();
     }
