@@ -42,9 +42,9 @@ namespace WS {
         case ' ': return Instruction(PUSH, readInteger());
         case '\t':
             switch (nextChar()) {
-            case ' ': return COPY;
+            case ' ': return Instruction(COPY, readInteger());
             case '\t': return INVALID_INSTR;
-            case '\n': return SLIDE;
+            case '\n': return Instruction(SLIDE, readInteger());
             }
             break;
         case '\n':

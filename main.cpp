@@ -26,8 +26,10 @@ void assemble(const char* in, const char* out) {
         switch (instr.type) {
         case PUSH: fprintf(out_file, "\tpush %lld", instr.value); break;
         case DUP: fprintf(out_file, "\tdup"); break;
+        case COPY: fprintf(out_file, "\tcopy %lld", instr.value); break;
         case SWAP: fprintf(out_file, "\tswap"); break;
         case DROP: fprintf(out_file, "\tdrop"); break;
+        case SLIDE: fprintf(out_file, "\tslide %lld", instr.value); break;
 
         case ADD: fprintf(out_file, "\tadd"); break;
         case SUB: fprintf(out_file, "\tsub"); break;
@@ -55,6 +57,9 @@ void assemble(const char* in, const char* out) {
         }
         fputc('\n', out_file);
     }
+
+    fclose(in_file);
+    fclose(out_file);
 }
 
 void interpret(const char* in) {
@@ -67,6 +72,7 @@ void interpret(const char* in) {
     }
     VM vm(instructions);
     vm.execute();
+    fclose(in_file);
 }
 
 void bottles() {
@@ -146,12 +152,16 @@ void toBinary(const char* in, const char* out) {
     FILE* in_file = fopen(in, "r");
     FILE* out_file = fopen(out, "wb");
     toBinary(in_file, out_file);
+    fclose(in_file);
+    fclose(out_file);
 }
 
 void fromBinary(const char* in, const char* out) {
     FILE* in_file = fopen(in, "rb");
     FILE* out_file = fopen(out, "w");
     fromBinary(in_file, out_file);
+    fclose(in_file);
+    fclose(out_file);
 }
 
 int main(int argc, char* argv[]) {
