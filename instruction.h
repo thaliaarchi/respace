@@ -42,11 +42,7 @@ namespace WS {
         InstructionType type;
         integer_t value;
 
-        Instruction(InstructionType type = INVALID_INSTR, integer_t value = NULL) : type(type), value(value) {}
-
-        operator int() const { // To allow instruction to be used as condition in while
-            return this->type;
-        }
+        Instruction(InstructionType type = INVALID_INSTR, integer_t value = 0) : type(type), value(value) {}
     };
 }
 

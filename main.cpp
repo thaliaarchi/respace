@@ -1,7 +1,7 @@
 #define _CRT_SECURE_NO_DEPRECATE // To use fopen in VS
 #include <cstdio>
 #include <vector>
-#include "constants.h"
+#include "instruction.h"
 #include "parser.h"
 #include "vm.h"
 #include "binary.h"
@@ -20,38 +20,38 @@ void assemble(const char* in, const char* out) {
             parser.next(instr);
         }
         catch (ParseException e) {
-            fprintf(out_file, "\tL%d:C%d %s\n", e.line, e.col, e.what);
+            fprintf(out_file, "\tL%lu:C%lu %s\n", e.line, e.col, e.what);
             continue;
         }
         switch (instr.type) {
-        case PUSH: fprintf(out_file, "\tpush %lld", instr.value); break;
-        case DUP: fprintf(out_file, "\tdup"); break;
-        case COPY: fprintf(out_file, "\tcopy %lld", instr.value); break;
-        case SWAP: fprintf(out_file, "\tswap"); break;
-        case DROP: fprintf(out_file, "\tdrop"); break;
-        case SLIDE: fprintf(out_file, "\tslide %lld", instr.value); break;
+        case PUSH:     fprintf(out_file, "\tpush %lld", instr.value); break;
+        case DUP:      fprintf(out_file, "\tdup"); break;
+        case COPY:     fprintf(out_file, "\tcopy %lld", instr.value); break;
+        case SWAP:     fprintf(out_file, "\tswap"); break;
+        case DROP:     fprintf(out_file, "\tdrop"); break;
+        case SLIDE:    fprintf(out_file, "\tslide %lld", instr.value); break;
 
-        case ADD: fprintf(out_file, "\tadd"); break;
-        case SUB: fprintf(out_file, "\tsub"); break;
-        case MUL: fprintf(out_file, "\tmul"); break;
-        case DIV: fprintf(out_file, "\tdiv"); break;
-        case MOD: fprintf(out_file, "\tmod"); break;
+        case ADD:      fprintf(out_file, "\tadd"); break;
+        case SUB:      fprintf(out_file, "\tsub"); break;
+        case MUL:      fprintf(out_file, "\tmul"); break;
+        case DIV:      fprintf(out_file, "\tdiv"); break;
+        case MOD:      fprintf(out_file, "\tmod"); break;
 
-        case STORE: fprintf(out_file, "\tstore"); break;
+        case STORE:    fprintf(out_file, "\tstore"); break;
         case RETRIEVE: fprintf(out_file, "\tretrieve"); break;
 
-        case LABEL: fprintf(out_file, "label_%lld:", instr.value); break;
-        case CALL: fprintf(out_file, "\tcall label_%lld", instr.value); break;
-        case JMP: fprintf(out_file, "\tjmp label_%lld", instr.value); break;
-        case JZ: fprintf(out_file, "\tjz label_%lld", instr.value); break;
-        case JN: fprintf(out_file, "\tjn label_%lld", instr.value); break;
-        case RET: fprintf(out_file, "\tret"); break;
-        case END: fprintf(out_file, "\tend"); break;
+        case LABEL:    fprintf(out_file, "label_%lld:", instr.value); break;
+        case CALL:     fprintf(out_file, "\tcall label_%lld", instr.value); break;
+        case JMP:      fprintf(out_file, "\tjmp label_%lld", instr.value); break;
+        case JZ:       fprintf(out_file, "\tjz label_%lld", instr.value); break;
+        case JN:       fprintf(out_file, "\tjn label_%lld", instr.value); break;
+        case RET:      fprintf(out_file, "\tret"); break;
+        case END:      fprintf(out_file, "\tend"); break;
 
-        case PRINTC: fprintf(out_file, "\tprintc"); break;
-        case PRINTI: fprintf(out_file, "\tprinti"); break;
-        case READC: fprintf(out_file, "\treadc"); break;
-        case READI: fprintf(out_file, "\treadi"); break;
+        case PRINTC:   fprintf(out_file, "\tprintc"); break;
+        case PRINTI:   fprintf(out_file, "\tprinti"); break;
+        case READC:    fprintf(out_file, "\treadc"); break;
+        case READI:    fprintf(out_file, "\treadi"); break;
 
         case INVALID_INSTR: if (!parser.isEOF()) fprintf(out_file, "ERROR!"); break;
         }
@@ -165,10 +165,10 @@ void fromBinary(const char* in, const char* out) {
 }
 
 int main(int argc, char* argv[]) {
-    assemble("hello-world.ws", "hello-world.wsa");
-    toBinary("hello-world.ws", "hello-world.wsx");
-    fromBinary("hello-world.wsx", "hello-world.wsx.ws");
-    interpret("hello-world.ws");
+    assemble("programs/hello-world.ws", "programs/hello-world.wsa");
+    toBinary("programs/hello-world.ws", "programs/hello-world.wsx");
+    fromBinary("programs/hello-world.wsx", "programs/hello-world.wsx.ws");
+    interpret("programs/hello-world.ws");
     bottles();
     count(1, 10);
     system("pause");

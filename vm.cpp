@@ -8,43 +8,43 @@ namespace WS {
         while (pc_ < instructions_.size()) {
             Instruction instr = instructions_[pc_];
             switch (instr.type) {
-            case WS::PUSH: instrPush(instr); break;
-            case WS::DUP: instrDup(); break;
-            case WS::COPY: instrCopy(); break;
-            case WS::SWAP: instrSwap(); break;
-            case WS::DROP: instrDrop(); break;
-            case WS::SLIDE: instrSlide(); break;
+            case PUSH:  instrPush(instr.value); break;
+            case DUP:   instrDup(); break;
+            case COPY:  instrCopy(); break;
+            case SWAP:  instrSwap(); break;
+            case DROP:  instrDrop(); break;
+            case SLIDE: instrSlide(); break;
 
-            case WS::ADD: instrAdd(); break;
-            case WS::SUB: instrSub(); break;
-            case WS::MUL: instrMul(); break;
-            case WS::DIV: instrDiv(); break;
-            case WS::MOD: instrMod(); break;
+            case ADD: instrAdd(); break;
+            case SUB: instrSub(); break;
+            case MUL: instrMul(); break;
+            case DIV: instrDiv(); break;
+            case MOD: instrMod(); break;
 
-            case WS::STORE: instrStore(); break;
-            case WS::RETRIEVE: instrRetrieve(); break;
+            case STORE:    instrStore(); break;
+            case RETRIEVE: instrRetrieve(); break;
 
-            case WS::LABEL: instrLabel(); break;
-            case WS::CALL: instrCall(instr); break;
-            case WS::JMP: instrJmp(instr); break;
-            case WS::JZ: instrJz(instr); break;
-            case WS::JN: instrJn(instr); break;
-            case WS::RET: instrRet(); break;
-            case WS::END: instrEnd(); break;
+            case LABEL: instrLabel(); break;
+            case CALL:  instrCall(instr.value); break;
+            case JMP:   instrJmp(instr.value); break;
+            case JZ:    instrJz(instr.value); break;
+            case JN:    instrJn(instr.value); break;
+            case RET:   instrRet(); break;
+            case END:   instrEnd(); break;
 
-            case WS::PRINTC: instrPrintC(); break;
-            case WS::PRINTI: instrPrintI(); break;
-            case WS::READC: instrReadC(); break;
-            case WS::READI: instrReadI(); break;
+            case PRINTC: instrPrintC(); break;
+            case PRINTI: instrPrintI(); break;
+            case READC:  instrReadC(); break;
+            case READI:  instrReadI(); break;
 
-            case WS::INVALID_INSTR: throw "Invalid instruction!";
+            case INVALID_INSTR: throw "Invalid instruction!";
             }
         }
     }
 
     // Push the number onto the stack
-    void VM::instrPush(Instruction instr) {
-        stack_.push_back(instr.value);
+    void VM::instrPush(integer_t value) {
+        stack_.push_back(value);
         pc_++;
     }
     // Duplicate the top item on the stack
@@ -125,27 +125,27 @@ namespace WS {
         pc_++;
     }
     // Call a subroutine
-    void VM::instrCall(Instruction instr) {
+    void VM::instrCall(integer_t label) {
         call_stack_.push(pc_);
-        pc_ = labels_[instr.value];
+        pc_ = labels_[label];
     }
     // Jump unconditionally to a label
-    void VM::instrJmp(Instruction instr) {
-        pc_ = labels_[instr.value];
+    void VM::instrJmp(integer_t label) {
+        pc_ = labels_[label];
     }
     // Jump to a label if the top of the stack is zero
-    void VM::instrJz(Instruction instr) {
+    void VM::instrJz(integer_t label) {
         if (pop() == 0) {
-            instrJmp(instr);
+            instrJmp(label);
         }
         else {
             pc_++;
         }
     }
     // Jump to a label if the top of the stack is negative
-    void VM::instrJn(Instruction instr) {
+    void VM::instrJn(integer_t label) {
         if (pop() < 0) {
-            instrJmp(instr);
+            instrJmp(label);
         }
         else {
             pc_++;
@@ -179,7 +179,7 @@ namespace WS {
     // 	Read a number and place it in the location given by the top of the stack
     void VM::instrReadI() {
         integer_t integer;
-        scanf_s("%lld", &integer);
+        scanf("%lld", &integer);
         push(integer);
         pc_++;
     }

@@ -4,18 +4,18 @@
 #include <vector>
 #include <stack>
 #include <map>
-#include "constants.h"
+#include "instruction.h"
 
 namespace WS {
     class VM {
     public:
-        VM(std::vector<Instruction> instructions) : instructions_(instructions), pc_(0) {
+        VM(std::vector<Instruction>& instructions) : instructions_(instructions), pc_(0) {
             initLabels();
         }
 
         void execute();
 
-        void instrPush(Instruction instr);
+        void instrPush(integer_t value);
         void instrDup();
         void instrCopy();
         void instrSwap();
@@ -32,10 +32,10 @@ namespace WS {
         void instrRetrieve();
 
         void instrLabel();
-        void instrCall(Instruction instr);
-        void instrJmp(Instruction instr);
-        void instrJz(Instruction instr);
-        void instrJn(Instruction instr);
+        void instrCall(integer_t value);
+        void instrJmp(integer_t value);
+        void instrJz(integer_t value);
+        void instrJn(integer_t value);
         void instrRet();
         void instrEnd();
 

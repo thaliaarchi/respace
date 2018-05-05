@@ -2,7 +2,7 @@
 #define WS_PARSER_H_
 
 #include <cstdio>
-#include "constants.h"
+#include "instruction.h"
 
 namespace WS {
     struct ParseException {
