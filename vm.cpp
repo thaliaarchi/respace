@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_WARNINGS // To use fscanf in VS
 #include <vector>
 #include <stack>
 #include <map>

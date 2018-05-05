@@ -9,7 +9,7 @@
 namespace WS {
     class VM {
     public:
-        VM(std::vector<Instruction>& instructions) : instructions_(instructions), pc_(0) {
+        VM(std::vector<Instruction> instructions) : instructions_(instructions), pc_(0) {
             initLabels();
         }
 
