@@ -20,8 +20,6 @@ namespace WS {
             // Otherwise, ignore character
             }
         }
-
-        writer.flushBits();
     }
 
     void fromBinary(FILE* in, FILE* out) {

@@ -12,7 +12,6 @@ namespace WS {
         void write(block_t block);
         void writeBit(block_t bit);
         void flush();
-        void flushBits();
 
     private:
         void writeBuffer(size_t size);

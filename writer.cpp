@@ -24,16 +24,17 @@ namespace WS {
     }
 
     void Writer::flush() {
+        if (bit_i_ < HIGH_BIT_) {
+            write(bit_block_);
+        }
         writeBuffer(buffer_i_);
-    }
-
-    void Writer::flushBits() {
-        buffer_[buffer_i_++] = bit_block_;
     }
 
     // Private
     void Writer::writeBuffer(size_t size) {
-        fwrite(buffer_, sizeof(block_t), size, stream_);
-        buffer_i_ = 0;
+        if (size > 0) {
+            fwrite(buffer_, sizeof(block_t), size, stream_);
+            buffer_i_ = 0;
+        }
     }
 }
