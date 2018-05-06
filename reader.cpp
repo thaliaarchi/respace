@@ -27,10 +27,6 @@ namespace WS {
         return buffer_size_ > 0;
     }
 
-    void Reader::close() {
-        fclose(stream_);
-    }
-
     // Private
     void Reader::readBuffer() {
         buffer_size_ = fread(buffer_, sizeof(block_t), buffer_capacity_, stream_);

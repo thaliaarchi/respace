@@ -22,8 +22,6 @@ namespace WS {
         }
 
         writer.flushBits();
-        reader.close();
-        writer.close();
     }
 
     void fromBinary(FILE* in, FILE* out) {
@@ -44,9 +42,6 @@ namespace WS {
                 writer.write(' '); // [SPACE] is read as 0
             }
         }
-        
-        reader.close();
-        writer.close();
     }
 }
 

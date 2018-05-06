@@ -3,6 +3,10 @@
 namespace WS {
     Writer::Writer(FILE* stream, size_t buffer_capacity) : BufferIO(stream, buffer_capacity) {}
 
+    Writer::~Writer() {
+        flush();
+    }
+
     void Writer::write(block_t block) {
         if (buffer_i_ >= buffer_capacity_) {
             writeBuffer(buffer_capacity_);
@@ -19,13 +23,12 @@ namespace WS {
         bit_block_ |= bit << bit_i_--;
     }
 
-    void Writer::flushBits() {
-        buffer_[buffer_i_++] = bit_block_;
+    void Writer::flush() {
+        writeBuffer(buffer_i_);
     }
 
-    void Writer::close() {
-        writeBuffer(buffer_i_);
-        fclose(stream_);
+    void Writer::flushBits() {
+        buffer_[buffer_i_++] = bit_block_;
     }
 
     // Private

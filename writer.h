@@ -7,11 +7,12 @@ namespace WS {
     class Writer : public BufferIO {
     public:
         Writer(FILE* stream, size_t buffer_capacity);
+        ~Writer();
 
         void write(block_t block);
         void writeBit(block_t bit);
+        void flush();
         void flushBits();
-        void close();
 
     private:
         void writeBuffer(size_t size);

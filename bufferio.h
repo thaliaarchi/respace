@@ -11,7 +11,7 @@ namespace WS {
 
     class BufferIO {
     public:
-        ~BufferIO() {
+        virtual ~BufferIO() {
             delete[] buffer_;
         }
 

@@ -11,7 +11,6 @@ namespace WS {
         block_t next();
         block_t nextBit();
         bool hasNext();
-        void close();
 
     private:
         void readBuffer();
