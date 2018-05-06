@@ -165,9 +165,9 @@ void fromBinary(const char* in, const char* out) {
 }
 
 int main(int argc, char* argv[]) {
-    assemble("programs/hello-world.ws", "programs/hello-world.wsa");
-    toBinary("programs/hello-world.ws", "programs/hello-world.wsx");
-    fromBinary("programs/hello-world.wsx", "programs/hello-world.wsx.ws");
+    assemble("programs/hello-world.ws", "programs/hello-world.out.wsa");
+    toBinary("programs/hello-world.ws", "programs/hello-world.out.wsx");
+    fromBinary("programs/hello-world.out.wsx", "programs/hello-world.out.ws");
     interpret("programs/hello-world.ws");
     bottles();
     count(1, 10);
