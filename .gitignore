@@ -1,0 +1,9 @@
+# Project files
+Debug
+.vscode
+*.vcxproj
+*.vcxproj.*
+
+# Generated files
+*.out
+*.out.*
