@@ -14,7 +14,7 @@ namespace WS {
         void close();
 
     private:
-        size_t readBuffer();
+        void readBuffer();
     };
 }
 

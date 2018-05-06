@@ -22,7 +22,7 @@ namespace WS {
 
     bool Reader::hasNext() {
         if (buffer_i_ >= buffer_size_ && buffer_size_ > 0) {
-            return readBuffer() > 0;
+            readBuffer();
         }
         return buffer_size_ > 0;
     }
@@ -32,9 +32,8 @@ namespace WS {
     }
 
     // Private
-    size_t Reader::readBuffer() {
+    void Reader::readBuffer() {
         buffer_size_ = fread(buffer_, sizeof(block_t), buffer_capacity_, stream_);
         buffer_i_ = 0;
-        return buffer_size_;
     }
 }
