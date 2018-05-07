@@ -1,5 +1,5 @@
-    push '>'
-    printc
+# Press ^@ (Ctrl+@) to insert NUL and exit the interpreter
+
 .parse_loop:
     call parse
     jmp .parse_loop
@@ -535,8 +535,6 @@ read_char:
     jz .read_char_end
     ret
 .read_char_end:
-    push "<End of input>\n"
-    call print_string
     end
 
 read_integer:

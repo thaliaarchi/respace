@@ -165,12 +165,21 @@ void fromBinary(const char* in, const char* out) {
 }
 
 int main(int argc, char* argv[]) {
+    if (argc > 1) {
+        try {
+            interpret(argv[1]);
+        }
+        catch (const char* e) {
+            printf("ERROR: %s", e);
+        }
+    }
+    toBinary("programs/ws-assemble.ws", "programs/ws-assemble.out.wsx");
     assemble("programs/hello-world.ws", "programs/hello-world.out.wsa");
     toBinary("programs/hello-world.ws", "programs/hello-world.out.wsx");
     fromBinary("programs/hello-world.out.wsx", "programs/hello-world.out.ws");
     interpret("programs/hello-world.ws");
-    bottles();
-    count(1, 10);
+    //bottles();
+    //count(1, 10);
 #ifdef _WIN32
     system("pause");
 #endif
