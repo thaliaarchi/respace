@@ -8,3 +8,5 @@ Debug
 *.o
 *.out
 *.out.*
+.depend
+wspace
