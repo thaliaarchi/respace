@@ -577,6 +577,7 @@ read_unsigned:
     push 0
 
 .read_unsigned_loop:
+    swap
     call read_char
 
     # case [Space]: insert 0 into integer
@@ -601,11 +602,13 @@ read_unsigned:
     jmp .read_unsigned_loop
 
 .read_unsigned_0:
+    swap
     push 2
     mul
     jmp .read_unsigned_loop
 
 .read_unsigned_1:
+    swap
     push 2
     mul
     push 1
@@ -613,6 +616,7 @@ read_unsigned:
     jmp .read_unsigned_loop
 
 .read_unsigned_end:
+    swap
     ret
 
 print_string:
