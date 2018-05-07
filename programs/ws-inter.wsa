@@ -1,529 +1,618 @@
-    push ' '
-    push '$'
+    push '>'
     printc
-    printc
-.main_loop:
+.parse_loop:
     call parse
-    jmp .main_loop
+    jmp .parse_loop
 
-next:
 parse:
     call read_char
 
-    # If [Space]: Stack manipulation
+    # case [Space]: Stack Manipulation
     dup
     push ' '
     sub
     jz parse_stack
 
-    # If [Tab]: Arithmetic, heap access, or I/O
+    # case [Tab]: Arithmetic, Heap Access, or I/O
     dup
     push '\t'
     sub
     jz .parse_tab
 
-    # If [LF]: Flow control
+    # case [LF]: Flow Control
     dup
     push '\n'
     sub
     jz parse_flow
 
-    # Else: Ignore character
+    # default: ignore character
     jmp parse
 
 .parse_tab:
     call read_char
 
-    # If [Tab][Space]: Arithmetic
+    # case [Tab][Space]: Arithmetic
     dup
     push ' '
     sub
     jz parse_arith
 
-    # If [Tab][Tab]: Heap access
+    # case [Tab][Tab]: Heap Access
     dup
     push '\t'
     sub
     jz parse_heap
 
-    # If [Tab][LF]: I/O
+    # case [Tab][LF]: I/O
     dup
     push '\n'
     sub
     jz parse_io
 
-    # Else: Ignore character
+    # default: ignore character
     jmp .parse_tab
 
 parse_stack:
     call read_char
 
-    # If [Space]: Push instruction
+    # case [Space]: push
     dup
     push ' '
     sub
     jz execute_push
 
-    # If [Tab]: Copy, slide, or invalid
+    # case [Tab]: copy, slide, or invalid instruction
     dup
     push '\t'
     sub
     jz .parse_stack_tab
 
-    # If [LF]: Dup, swap, or drop
+    # case [LF]: dup, swap, or drop
     dup
     push '\n'
     sub
     jz .parse_stack_lf
 
-    # Else: Ignore character
+    # default: ignore character
     jmp parse_stack
 
 .parse_stack_tab:
     call read_char
 
-    # If [Tab][Space]: Copy
+    # case [Tab][Space]: copy
     dup
     push ' '
     sub
     jz execute_copy
 
-    # If [Tab][Tab]: Invalid instruction
+    # case [Tab][Tab]: invalid instruction
     dup
     push '\t'
     sub
     jz invalid_instr
 
-    # If [Tab][LF]: Slide
+    # case [Tab][LF]: slide
     dup
     push '\n'
     sub
     jz execute_slide
 
-    # Else: Ignore character
+    # default: ignore character
     jmp .parse_stack_tab
 
 .parse_stack_lf:
     call read_char
 
-    # If [LF][Space]: Dup
+    # case [LF][Space]: dup
     dup
     push ' '
     sub
     jz execute_dup
 
-    # If [LF][Tab]: Swap
+    # case [LF][Tab]: swap
     dup
     push '\t'
     sub
     jz execute_swap
 
-    # If [LF][LF]: Drop
+    # case [LF][LF]: drop
     dup
     push '\n'
     sub
     jz execute_drop
 
-    # Else: Ignore character
+    # default: ignore character
     jmp .parse_stack_lf
 
 parse_arith:
     call read_char
 
-    # If [Space]: Add, sub, or mul
+    # case [Space]: add, sub, or mul
     dup
     push ' '
     sub
     jz .parse_arith_space
 
-    # If [Tab]: Div, mod, or invalid
+    # case [Tab]: div, mod, or invalid
     dup
     push '\t'
     sub
     jz .parse_arith_tab
 
-    # If [LF]: Invalid instruction
+    # case [LF]: invalid instruction
     dup
     push '\n'
     sub
     jz .invalid_instr
 
-    # Else: Ignore character
+    # default: ignore character
     jmp parse_arith
 
 .parse_arith_space:
     call read_char
 
-    # If [Space][Space]: Add
+    # case [Space][Space]: add
     dup
     push ' '
     sub
     jz execute_add
 
-    # If [Space][Tab]: Sub
+    # case [Space][Tab]: sub
     dup
     push '\t'
     sub
     jz execute_sub
 
-    # If [Space][LF]: Mul
+    # case [Space][LF]: mul
     dup
     push '\n'
     sub
     jz execute_mul
 
-    # Else: Ignore character
+    # default: ignore character
     jmp .parse_arith_space
 
 .parse_arith_tab:
     call read_char
 
-    # If [Tab][Space]: Div
+    # case [Tab][Space]: div
     dup
     push ' '
     sub
     jz execute_div
 
-    # If [Tab][Tab]: Mod
+    # case [Tab][Tab]: mod
     dup
     push '\t'
     sub
     jz execute_mod
 
-    # If [Tab][LF]: Invalid instruction
+    # case [Tab][LF]: invalid instruction
     dup
     push '\n'
     sub
     jz .invalid_instr
 
-    # Else: Ignore character
+    # default: ignore character
     jmp .parse_arith_tab
 
 parse_heap:
     call read_char
 
-    # If [Space]: Store
+    # case [Space]: store
     dup
     push ' '
     sub
     jz execute_store
 
-    # If [Tab]: Retrieve
+    # case [Tab]: retrieve
     dup
     push '\t'
     sub
     jz execute_retrieve
 
-    # If [LF]: Invalid instruction
+    # case [LF]: invalid instruction
     dup
     push '\n'
     sub
     jz invalid_instr
 
-    # Else: Ignore character
+    # default: ignore character
     jmp parse_heap
 
 parse_flow:
     call read_char
 
-    # If [Space]: Label, call, or jump
+    # case [Space]: label, call, or jump
     dup
     push ' '
     sub
     jz .parse_flow_space
 
-    # If [Tab]: Jz, jn, or ret
+    # case [Tab]: jz, jn, or ret
     dup
     push '\t'
     sub
     jz .parse_flow_tab
 
-    # If [LF]: End or invalid
+    # case [LF]: end or invalid instruction
     dup
     push '\n'
     sub
     jz .parse_flow_lf
 
-    # Else: Ignore character
+    # default: ignore character
     jmp parse_flow
 
 .parse_flow_space:
     call read_char
 
-    # If [Space][Space]: Label
+    # case [Space][Space]: label
     dup
     push ' '
     sub
     jz execute_label
 
-    # If [Space][Tab]: Call
+    # case [Space][Tab]: call
     dup
     push '\t'
     sub
     jz execute_call
 
-    # If [Space][LF]: Jmp
+    # case [Space][LF]: jmp
     dup
     push '\n'
     sub
     jz execute_jmp
 
-    # Else: Ignore character
+    # default: ignore character
     jmp .parse_flow_space
 
 .parse_flow_tab:
     call read_char
 
-    # If [Tab][Space]: Jz
+    # case [Tab][Space]: jz
     dup
     push ' '
     sub
     jz execute_jz
 
-    # If [Tab][Tab]: Jn
+    # case [Tab][Tab]: jn
     dup
     push '\t'
     sub
     jz execute_jn
 
-    # If [Tab][LF]: Ret
+    # case [Tab][LF]: ret
     dup
     push '\n'
     sub
     jz execute_ret
 
-    # Else: Ignore character
+    # default: ignore character
     jmp .parse_flow_tab
 
 .parse_flow_lf:
     call read_char
 
-    # If [LF][Space]: Invalid instruction
+    # case [LF][Space]: invalid instruction
     dup
     push ' '
     sub
     jz invalid_instr
 
-    # If [LF][Tab]: Invalid instruction
+    # case [LF][Tab]: invalid instruction
     dup
     push '\t'
     sub
     jz invalid_instr
 
-    # If [LF][LF]: End
+    # case [LF][LF]: end
     dup
     push '\n'
     sub
     jz execute_end
 
-    # Else: Ignore character
+    # default: ignore character
     jmp .parse_flow_lf
 
 parse_io:
     call read_char
 
-    # If [Space]: Printc, printi, or invalid
+    # case [Space]: printc, printi, or invalid
     dup
     push ' '
     sub
     jz .parse_io_space
 
-    # If [Tab]: Readc, readi, or invalid
+    # case [Tab]: readc, readi, or invalid
     dup
     push '\t'
     sub
     jz .parse_io_tab:
 
-    # If [LF]: Invalid instruction
+    # case [LF]: invalid instruction
     dup
     push '\n'
     sub
     jz invalid_instr
 
-    # Else: Ignore character
+    # default: ignore character
     jmp parse_io
 
 .parse_io_space:
     call read_char
 
-    # If [Space][Space]: Printc
+    # case [Space][Space]: printc
     dup
     push ' '
     sub
     jz execute_printc
 
-    # If [Space][Tab]: Printi
+    # case [Space][Tab]: printi
     dup
     push '\t'
     sub
     jz execute_printi
 
-    # If [Space][LF]: Invalid instruction
+    # case [Space][LF]: invalid instruction
     dup
     push '\n'
     sub
     jz invalid_instr
 
-    # Else: Ignore character
+    # default: ignore character
     jmp .parse_io_space
 
 .parse_io_tab:
     call read_char
 
-    # If [Tab][Space]: Readc
+    # case [Tab][Space]: readc
     dup
     push ' '
     sub
     jz execute_readc
 
-    # If [Tab][Tab]: Readi
+    # case [Tab][Tab]: readi
     dup
     push '\t'
     sub
     jz execute_readi
 
-    # If [Tab][LF]: Invalid instruction
+    # case [Tab][LF]: invalid instruction
     dup
     push '\n'
     sub
     jz invalid_instr
 
-    # Else: Ignore character
+    # default: ignore character
     jmp .parse_io_tab
 
 execute_push:
-    push "push\n"
+    push "\tpush "
     call print_string
     call read_integer
+    printi
+    push '\n'
+    printc
     ret
 execute_dup:
-    push "dup\n"
+    push "\tdup\n"
     call print_string
     ret
 execute_copy:
-    push "copy\n"
+    push "\tcopy "
     call print_string
     call read_integer
+    printi
+    push '\n'
+    printc
     ret
 execute_swap:
-    push "swap\n"
+    push "\tswap\n"
     call print_string
     ret
 execute_drop:
-    push "drop\n"
+    push "\tdrop\n"
     call print_string
     ret
 execute_slide:
-    push "slide\n"
+    push "\tslide "
     call print_string
     call read_integer
+    printi
+    push '\n'
+    printc
     ret
 
 execute_add:
-    push "add\n"
+    push "\tadd\n"
     call print_string
     ret
 execute_sub:
-    push "sub\n"
+    push "\tsub\n"
     call print_string
     ret
 execute_mul:
-    push "mul\n"
+    push "\tmul\n"
     call print_string
     ret
 execute_div:
-    push "div\n"
+    push "\tdiv\n"
     call print_string
     ret
 execute_mod:
-    push "mod\n"
+    push "\tmod\n"
     call print_string
     ret
 
 execute_store:
-    push "store\n"
+    push "\tstore\n"
     call print_string
     ret
 execute_retrieve:
-    push "retrieve\n"
+    push "\tretrieve\n"
     call print_string
     ret
 
 execute_label:
-    push "label_:\n"
+    push "label_"
     call print_string
-    call read_integer
+    call read_unsigned
+    printi
+    push '\n'
+    push ':'
+    printc
+    printc
     ret
 execute_call:
-    push "call\n"
+    push "\tcall "
     call print_string
-    call read_integer
+    call read_unsigned
+    printi
+    push '\n'
+    printc
     ret
 execute_jmp:
-    push "jmp\n"
+    push "\tjmp "
     call print_string
-    call read_integer
+    call read_unsigned
+    printi
+    push '\n'
+    printc
     ret
 execute_jz:
-    push "jz\n"
+    push "\tjz "
     call print_string
-    call read_integer
+    call read_unsigned
+    printi
+    push '\n'
+    printc
     ret
 execute_jn:
-    push "jn\n"
+    push "\tjn "
     call print_string
-    call read_integer
+    call read_unsigned
+    printi
+    push '\n'
+    printc
     ret
 execute_ret:
-    push "ret\n"
+    push "\tret\n"
     call print_string
     ret
 execute_end:
-    push "end\n"
+    push "\tend\n"
     call print_string
     ret
 
 execute_printc:
-    push "printc\n"
+    push "\tprintc\n"
     call print_string
     ret
 execute_printi:
-    push "printi\n"
+    push "\tprinti\n"
     call print_string
     ret
 execute_readc:
-    push "readc\n"
+    push "\treadc\n"
     call print_string
     ret
 execute_readi:
-    push "readi\n"
+    push "\treadi\n"
     call print_string
     ret
 
 read_char:
+    drop
     push 0
     dup
     readc
     retrieve
 
-    # Check end
+    # Check for NUL and exit input
     dup
     jz .read_char_end
     ret
 .read_char_end:
-    push "<Terminated: NUL>"
+    push "<End of input>\n"
     call print_string
     end
 
-# Read up to [LF]
 read_integer:
     call read_char
+
+    # case [Space]: positive integer
+    dup
+    push ' '
+    sub
+    jz read_unsigned
+
+    # case [Tab]: negative integer
+    dup
+    push '\t'
+    sub
+    jz .read_integer_negative
+
+    # case [LF]: zero
     dup
     push '\n'
     sub
-    jz .read_integer_end
+    jz .read_integer_zero
+
+    # default: ignore character
     jmp read_integer
-.read_integer_end:
+
+.read_integer_negative:
+    call read_unsigned
+    push -1
+    mul
+    ret
+
+.read_integer_zero:
+    push 0
+    ret
+
+read_unsigned:
+    push 0
+
+.read_unsigned_loop:
+    call read_char
+
+    # case [Space]: insert 0 into integer
+    dup
+    push ' '
+    sub
+    jz .read_unsigned_0
+
+    # case [Tab]: insert 1 into integer
+    dup
+    push '\t'
+    sub
+    jz .read_unsigned_1
+
+    # case [LF]: terminate integer
+    dup
+    push '\n'
+    sub
+    jz .read_unsigned_end
+
+    # default: ignore character
+    jmp .read_unsigned_loop
+
+.read_unsigned_0:
+    push 2
+    mul
+    jmp .read_unsigned_loop
+
+.read_unsigned_1:
+    push 2
+    mul
+    push 1
+    add
+    jmp .read_unsigned_loop
+
+.read_unsigned_end:
     ret
 
 print_string:
