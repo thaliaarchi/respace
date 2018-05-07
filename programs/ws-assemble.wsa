@@ -59,7 +59,7 @@ parse_stack:
     dup
     push ' '
     sub
-    jz execute_push
+    jz assemble_push
 
     # case [Tab]: copy, slide, or invalid instruction
     dup
@@ -83,7 +83,7 @@ parse_stack:
     dup
     push ' '
     sub
-    jz execute_copy
+    jz assemble_copy
 
     # case [Tab][Tab]: invalid instruction
     dup
@@ -95,7 +95,7 @@ parse_stack:
     dup
     push '\n'
     sub
-    jz execute_slide
+    jz assemble_slide
 
     # default: ignore character
     jmp .parse_stack_tab
@@ -107,19 +107,19 @@ parse_stack:
     dup
     push ' '
     sub
-    jz execute_dup
+    jz assemble_dup
 
     # case [LF][Tab]: swap
     dup
     push '\t'
     sub
-    jz execute_swap
+    jz assemble_swap
 
     # case [LF][LF]: drop
     dup
     push '\n'
     sub
-    jz execute_drop
+    jz assemble_drop
 
     # default: ignore character
     jmp .parse_stack_lf
@@ -155,19 +155,19 @@ parse_arith:
     dup
     push ' '
     sub
-    jz execute_add
+    jz assemble_add
 
     # case [Space][Tab]: sub
     dup
     push '\t'
     sub
-    jz execute_sub
+    jz assemble_sub
 
     # case [Space][LF]: mul
     dup
     push '\n'
     sub
-    jz execute_mul
+    jz assemble_mul
 
     # default: ignore character
     jmp .parse_arith_space
@@ -179,13 +179,13 @@ parse_arith:
     dup
     push ' '
     sub
-    jz execute_div
+    jz assemble_div
 
     # case [Tab][Tab]: mod
     dup
     push '\t'
     sub
-    jz execute_mod
+    jz assemble_mod
 
     # case [Tab][LF]: invalid instruction
     dup
@@ -203,13 +203,13 @@ parse_heap:
     dup
     push ' '
     sub
-    jz execute_store
+    jz assemble_store
 
     # case [Tab]: retrieve
     dup
     push '\t'
     sub
-    jz execute_retrieve
+    jz assemble_retrieve
 
     # case [LF]: invalid instruction
     dup
@@ -251,19 +251,19 @@ parse_flow:
     dup
     push ' '
     sub
-    jz execute_label
+    jz assemble_label
 
     # case [Space][Tab]: call
     dup
     push '\t'
     sub
-    jz execute_call
+    jz assemble_call
 
     # case [Space][LF]: jmp
     dup
     push '\n'
     sub
-    jz execute_jmp
+    jz assemble_jmp
 
     # default: ignore character
     jmp .parse_flow_space
@@ -275,19 +275,19 @@ parse_flow:
     dup
     push ' '
     sub
-    jz execute_jz
+    jz assemble_jz
 
     # case [Tab][Tab]: jn
     dup
     push '\t'
     sub
-    jz execute_jn
+    jz assemble_jn
 
     # case [Tab][LF]: ret
     dup
     push '\n'
     sub
-    jz execute_ret
+    jz assemble_ret
 
     # default: ignore character
     jmp .parse_flow_tab
@@ -311,7 +311,7 @@ parse_flow:
     dup
     push '\n'
     sub
-    jz execute_end
+    jz assemble_end
 
     # default: ignore character
     jmp .parse_flow_lf
@@ -347,13 +347,13 @@ parse_io:
     dup
     push ' '
     sub
-    jz execute_printc
+    jz assemble_printc
 
     # case [Space][Tab]: printi
     dup
     push '\t'
     sub
-    jz execute_printi
+    jz assemble_printi
 
     # case [Space][LF]: invalid instruction
     dup
@@ -371,13 +371,13 @@ parse_io:
     dup
     push ' '
     sub
-    jz execute_readc
+    jz assemble_readc
 
     # case [Tab][Tab]: readi
     dup
     push '\t'
     sub
-    jz execute_readi
+    jz assemble_readi
 
     # case [Tab][LF]: invalid instruction
     dup
@@ -388,74 +388,49 @@ parse_io:
     # default: ignore character
     jmp .parse_io_tab
 
-execute_push:
-    push "\tpush "
-    call print_string
-    call read_integer
-    printi
-    push '\n'
-    printc
-    ret
-execute_dup:
-    push "\tdup\n"
-    call print_string
-    ret
-execute_copy:
-    push "\tcopy "
-    call print_string
-    call read_integer
-    printi
-    push '\n'
-    printc
-    ret
-execute_swap:
-    push "\tswap\n"
-    call print_string
-    ret
-execute_drop:
-    push "\tdrop\n"
-    call print_string
-    ret
-execute_slide:
-    push "\tslide "
-    call print_string
-    call read_integer
-    printi
-    push '\n'
-    printc
-    ret
+assemble_push:
+    push "push"
+    jmp print_instr_integer
+assemble_dup:
+    push "dup"
+    jmp print_instr
+assemble_copy:
+    push "copy"
+    jmp print_instr_integer
+assemble_swap:
+    push "swap"
+    jmp print_instr
+assemble_drop:
+    push "drop"
+    jmp print_instr
+assemble_slide:
+    push "slide"
+    jmp print_instr_integer
 
-execute_add:
-    push "\tadd\n"
-    call print_string
-    ret
-execute_sub:
-    push "\tsub\n"
-    call print_string
-    ret
-execute_mul:
-    push "\tmul\n"
-    call print_string
-    ret
-execute_div:
-    push "\tdiv\n"
-    call print_string
-    ret
-execute_mod:
-    push "\tmod\n"
-    call print_string
-    ret
+assemble_add:
+    push "add"
+    jmp print_instr
+assemble_sub:
+    push "sub"
+    jmp print_instr
+assemble_mul:
+    push "mul"
+    jmp print_instr
+assemble_div:
+    push "div"
+    jmp print_instr
+assemble_mod:
+    push "mod"
+    jmp print_instr
 
-execute_store:
-    push "\tstore\n"
-    call print_string
-    ret
-execute_retrieve:
-    push "\tretrieve\n"
-    call print_string
-    ret
+assemble_store:
+    push "store"
+    jmp print_instr
+assemble_retrieve:
+    push "retrieve"
+    jmp print_instr
 
-execute_label:
+assemble_label:
     push "label_"
     call print_string
     call read_unsigned
@@ -465,63 +440,37 @@ execute_label:
     printc
     printc
     ret
-execute_call:
-    push "\tcall "
-    call print_string
-    call read_unsigned
-    printi
-    push '\n'
-    printc
-    ret
-execute_jmp:
-    push "\tjmp "
-    call print_string
-    call read_unsigned
-    printi
-    push '\n'
-    printc
-    ret
-execute_jz:
-    push "\tjz "
-    call print_string
-    call read_unsigned
-    printi
-    push '\n'
-    printc
-    ret
-execute_jn:
-    push "\tjn "
-    call print_string
-    call read_unsigned
-    printi
-    push '\n'
-    printc
-    ret
-execute_ret:
-    push "\tret\n"
-    call print_string
-    ret
-execute_end:
-    push "\tend\n"
-    call print_string
-    ret
+assemble_call:
+    push "call"
+    jmp print_instr_unsigned
+assemble_jmp:
+    push "jmp"
+    jmp print_instr_unsigned
+assemble_jz:
+    push "jz"
+    jmp print_instr_unsigned
+assemble_jn:
+    push "jn"
+    jmp print_instr_unsigned
+assemble_ret:
+    push "ret"
+    jmp print_instr
+assemble_end:
+    push "end"
+    jmp print_instr
 
-execute_printc:
-    push "\tprintc\n"
-    call print_string
-    ret
-execute_printi:
-    push "\tprinti\n"
-    call print_string
-    ret
-execute_readc:
-    push "\treadc\n"
-    call print_string
-    ret
-execute_readi:
-    push "\treadi\n"
-    call print_string
-    ret
+assemble_printc:
+    push "printc"
+    jmp print_instr
+assemble_printi:
+    push "printi"
+    jmp print_instr
+assemble_readc:
+    push "readc"
+    jmp print_instr
+assemble_readi:
+    push "readi"
+    jmp print_instr
 
 read_char:
     drop
@@ -624,4 +573,36 @@ print_string:
     jmp print_string
 .print_string_end:
     drop
+    ret
+
+print_instr:
+    call .print_instr
+    push "\n"
+    printc
+    ret
+
+.print_instr:
+    push "    "
+    call print_string
+    call print_string
+    ret
+
+print_instr_integer:
+    call .print_instr
+    push ' '
+    printc
+    call read_integer
+    printi
+    push '\n'
+    printc
+    ret
+
+print_instr_unsigned:
+    call .print_instr
+    push ' '
+    printc
+    call read_unsigned
+    printi
+    push '\n'
+    printc
     ret
