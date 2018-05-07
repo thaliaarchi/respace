@@ -171,6 +171,8 @@ int main(int argc, char* argv[]) {
     interpret("programs/hello-world.ws");
     bottles();
     count(1, 10);
+#ifdef _WIN32
     system("pause");
+#endif
     return 0;
 }

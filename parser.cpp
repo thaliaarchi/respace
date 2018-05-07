@@ -161,7 +161,7 @@ namespace WS {
         switch (nextChar()) {
         case ' ':  sign = 1; break;
         case '\t': sign = -1; break;
-        case '\n': throw badCharException();
+        case '\n': return 0;
         default: throw unexpectedException();
         }
         return sign * readUnsignedInteger();

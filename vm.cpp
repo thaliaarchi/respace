@@ -216,7 +216,7 @@ namespace WS {
 
     integer_t VM::top() {
         if (stack_.size() < 1) {
-            throw "Stack is empty!";
+            throw "Runtime Error: Stack underflow\n";
         }
         return stack_.back();
     }

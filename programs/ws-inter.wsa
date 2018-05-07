@@ -392,111 +392,111 @@ parse_io:
     jmp .parse_io_tab
 
 execute_push:
-    push "Push\n"
+    push "push\n"
     call print_string
     call read_integer
     ret
 execute_dup:
-    push "Dup\n"
+    push "dup\n"
     call print_string
     ret
 execute_copy:
-    push "Copy\n"
+    push "copy\n"
     call print_string
     call read_integer
     ret
 execute_swap:
-    push "Swap\n"
+    push "swap\n"
     call print_string
     ret
 execute_drop:
-    push "Drop\n"
+    push "drop\n"
     call print_string
     ret
 execute_slide:
-    push "Slide\n"
+    push "slide\n"
     call print_string
     call read_integer
     ret
 
 execute_add:
-    push "Add\n"
+    push "add\n"
     call print_string
     ret
 execute_sub:
-    push "Sub\n"
+    push "sub\n"
     call print_string
     ret
 execute_mul:
-    push "Mul\n"
+    push "mul\n"
     call print_string
     ret
 execute_div:
-    push "Div\n"
+    push "div\n"
     call print_string
     ret
 execute_mod:
-    push "Mod\n"
+    push "mod\n"
     call print_string
     ret
 
 execute_store:
-    push "Store\n"
+    push "store\n"
     call print_string
     ret
 execute_retrieve:
-    push "Retrieve\n"
+    push "retrieve\n"
     call print_string
     ret
 
 execute_label:
-    push "Label\n"
+    push "label_:\n"
     call print_string
     call read_integer
     ret
 execute_call:
-    push "Call\n"
+    push "call\n"
     call print_string
     call read_integer
     ret
 execute_jmp:
-    push "Jmp\n"
+    push "jmp\n"
     call print_string
     call read_integer
     ret
 execute_jz:
-    push "Jz\n"
+    push "jz\n"
     call print_string
     call read_integer
     ret
 execute_jn:
-    push "Jn\n"
+    push "jn\n"
     call print_string
     call read_integer
     ret
 execute_ret:
-    push "Ret\n"
+    push "ret\n"
     call print_string
     ret
 execute_end:
-    push "End\n"
+    push "end\n"
     call print_string
-    end
+    ret
 
 execute_printc:
-    push "Printc\n"
+    push "printc\n"
     call print_string
     ret
 execute_printi:
-    push "Printi\n"
+    push "printi\n"
     call print_string
     ret
 execute_readc:
-    push "Readc\n"
+    push "readc\n"
     call print_string
     ret
 execute_readi:
-    push "Readi\n"
+    push "readi\n"
     call print_string
     ret
 
@@ -505,7 +505,15 @@ read_char:
     dup
     readc
     retrieve
+
+    # Check end
+    dup
+    jz .read_char_end
     ret
+.read_char_end:
+    push "<Terminated: NUL>"
+    call print_string
+    end
 
 # Read up to [LF]
 read_integer:
