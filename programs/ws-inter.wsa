@@ -1,0 +1,528 @@
+    push ' '
+    push '$'
+    printc
+    printc
+.main_loop:
+    call parse
+    jmp .main_loop
+
+next:
+parse:
+    call read_char
+
+    # If [Space]: Stack manipulation
+    dup
+    push ' '
+    sub
+    jz parse_stack
+
+    # If [Tab]: Arithmetic, heap access, or I/O
+    dup
+    push '\t'
+    sub
+    jz .parse_tab
+
+    # If [LF]: Flow control
+    dup
+    push '\n'
+    sub
+    jz parse_flow
+
+    # Else: Ignore character
+    jmp parse
+
+.parse_tab:
+    call read_char
+
+    # If [Tab][Space]: Arithmetic
+    dup
+    push ' '
+    sub
+    jz parse_arith
+
+    # If [Tab][Tab]: Heap access
+    dup
+    push '\t'
+    sub
+    jz parse_heap
+
+    # If [Tab][LF]: I/O
+    dup
+    push '\n'
+    sub
+    jz parse_io
+
+    # Else: Ignore character
+    jmp .parse_tab
+
+parse_stack:
+    call read_char
+
+    # If [Space]: Push instruction
+    dup
+    push ' '
+    sub
+    jz execute_push
+
+    # If [Tab]: Copy, slide, or invalid
+    dup
+    push '\t'
+    sub
+    jz .parse_stack_tab
+
+    # If [LF]: Dup, swap, or drop
+    dup
+    push '\n'
+    sub
+    jz .parse_stack_lf
+
+    # Else: Ignore character
+    jmp parse_stack
+
+.parse_stack_tab:
+    call read_char
+
+    # If [Tab][Space]: Copy
+    dup
+    push ' '
+    sub
+    jz execute_copy
+
+    # If [Tab][Tab]: Invalid instruction
+    dup
+    push '\t'
+    sub
+    jz invalid_instr
+
+    # If [Tab][LF]: Slide
+    dup
+    push '\n'
+    sub
+    jz execute_slide
+
+    # Else: Ignore character
+    jmp .parse_stack_tab
+
+.parse_stack_lf:
+    call read_char
+
+    # If [LF][Space]: Dup
+    dup
+    push ' '
+    sub
+    jz execute_dup
+
+    # If [LF][Tab]: Swap
+    dup
+    push '\t'
+    sub
+    jz execute_swap
+
+    # If [LF][LF]: Drop
+    dup
+    push '\n'
+    sub
+    jz execute_drop
+
+    # Else: Ignore character
+    jmp .parse_stack_lf
+
+parse_arith:
+    call read_char
+
+    # If [Space]: Add, sub, or mul
+    dup
+    push ' '
+    sub
+    jz .parse_arith_space
+
+    # If [Tab]: Div, mod, or invalid
+    dup
+    push '\t'
+    sub
+    jz .parse_arith_tab
+
+    # If [LF]: Invalid instruction
+    dup
+    push '\n'
+    sub
+    jz .invalid_instr
+
+    # Else: Ignore character
+    jmp parse_arith
+
+.parse_arith_space:
+    call read_char
+
+    # If [Space][Space]: Add
+    dup
+    push ' '
+    sub
+    jz execute_add
+
+    # If [Space][Tab]: Sub
+    dup
+    push '\t'
+    sub
+    jz execute_sub
+
+    # If [Space][LF]: Mul
+    dup
+    push '\n'
+    sub
+    jz execute_mul
+
+    # Else: Ignore character
+    jmp .parse_arith_space
+
+.parse_arith_tab:
+    call read_char
+
+    # If [Tab][Space]: Div
+    dup
+    push ' '
+    sub
+    jz execute_div
+
+    # If [Tab][Tab]: Mod
+    dup
+    push '\t'
+    sub
+    jz execute_mod
+
+    # If [Tab][LF]: Invalid instruction
+    dup
+    push '\n'
+    sub
+    jz .invalid_instr
+
+    # Else: Ignore character
+    jmp .parse_arith_tab
+
+parse_heap:
+    call read_char
+
+    # If [Space]: Store
+    dup
+    push ' '
+    sub
+    jz execute_store
+
+    # If [Tab]: Retrieve
+    dup
+    push '\t'
+    sub
+    jz execute_retrieve
+
+    # If [LF]: Invalid instruction
+    dup
+    push '\n'
+    sub
+    jz invalid_instr
+
+    # Else: Ignore character
+    jmp parse_heap
+
+parse_flow:
+    call read_char
+
+    # If [Space]: Label, call, or jump
+    dup
+    push ' '
+    sub
+    jz .parse_flow_space
+
+    # If [Tab]: Jz, jn, or ret
+    dup
+    push '\t'
+    sub
+    jz .parse_flow_tab
+
+    # If [LF]: End or invalid
+    dup
+    push '\n'
+    sub
+    jz .parse_flow_lf
+
+    # Else: Ignore character
+    jmp parse_flow
+
+.parse_flow_space:
+    call read_char
+
+    # If [Space][Space]: Label
+    dup
+    push ' '
+    sub
+    jz execute_label
+
+    # If [Space][Tab]: Call
+    dup
+    push '\t'
+    sub
+    jz execute_call
+
+    # If [Space][LF]: Jmp
+    dup
+    push '\n'
+    sub
+    jz execute_jmp
+
+    # Else: Ignore character
+    jmp .parse_flow_space
+
+.parse_flow_tab:
+    call read_char
+
+    # If [Tab][Space]: Jz
+    dup
+    push ' '
+    sub
+    jz execute_jz
+
+    # If [Tab][Tab]: Jn
+    dup
+    push '\t'
+    sub
+    jz execute_jn
+
+    # If [Tab][LF]: Ret
+    dup
+    push '\n'
+    sub
+    jz execute_ret
+
+    # Else: Ignore character
+    jmp .parse_flow_tab
+
+.parse_flow_lf:
+    call read_char
+
+    # If [LF][Space]: Invalid instruction
+    dup
+    push ' '
+    sub
+    jz invalid_instr
+
+    # If [LF][Tab]: Invalid instruction
+    dup
+    push '\t'
+    sub
+    jz invalid_instr
+
+    # If [LF][LF]: End
+    dup
+    push '\n'
+    sub
+    jz execute_end
+
+    # Else: Ignore character
+    jmp .parse_flow_lf
+
+parse_io:
+    call read_char
+
+    # If [Space]: Printc, printi, or invalid
+    dup
+    push ' '
+    sub
+    jz .parse_io_space
+
+    # If [Tab]: Readc, readi, or invalid
+    dup
+    push '\t'
+    sub
+    jz .parse_io_tab:
+
+    # If [LF]: Invalid instruction
+    dup
+    push '\n'
+    sub
+    jz invalid_instr
+
+    # Else: Ignore character
+    jmp parse_io
+
+.parse_io_space:
+    call read_char
+
+    # If [Space][Space]: Printc
+    dup
+    push ' '
+    sub
+    jz execute_printc
+
+    # If [Space][Tab]: Printi
+    dup
+    push '\t'
+    sub
+    jz execute_printi
+
+    # If [Space][LF]: Invalid instruction
+    dup
+    push '\n'
+    sub
+    jz invalid_instr
+
+    # Else: Ignore character
+    jmp .parse_io_space
+
+.parse_io_tab:
+    call read_char
+
+    # If [Tab][Space]: Readc
+    dup
+    push ' '
+    sub
+    jz execute_readc
+
+    # If [Tab][Tab]: Readi
+    dup
+    push '\t'
+    sub
+    jz execute_readi
+
+    # If [Tab][LF]: Invalid instruction
+    dup
+    push '\n'
+    sub
+    jz invalid_instr
+
+    # Else: Ignore character
+    jmp .parse_io_tab
+
+execute_push:
+    push "Push\n"
+    call print_string
+    call read_integer
+    ret
+execute_dup:
+    push "Dup\n"
+    call print_string
+    ret
+execute_copy:
+    push "Copy\n"
+    call print_string
+    call read_integer
+    ret
+execute_swap:
+    push "Swap\n"
+    call print_string
+    ret
+execute_drop:
+    push "Drop\n"
+    call print_string
+    ret
+execute_slide:
+    push "Slide\n"
+    call print_string
+    call read_integer
+    ret
+
+execute_add:
+    push "Add\n"
+    call print_string
+    ret
+execute_sub:
+    push "Sub\n"
+    call print_string
+    ret
+execute_mul:
+    push "Mul\n"
+    call print_string
+    ret
+execute_div:
+    push "Div\n"
+    call print_string
+    ret
+execute_mod:
+    push "Mod\n"
+    call print_string
+    ret
+
+execute_store:
+    push "Store\n"
+    call print_string
+    ret
+execute_retrieve:
+    push "Retrieve\n"
+    call print_string
+    ret
+
+execute_label:
+    push "Label\n"
+    call print_string
+    call read_integer
+    ret
+execute_call:
+    push "Call\n"
+    call print_string
+    call read_integer
+    ret
+execute_jmp:
+    push "Jmp\n"
+    call print_string
+    call read_integer
+    ret
+execute_jz:
+    push "Jz\n"
+    call print_string
+    call read_integer
+    ret
+execute_jn:
+    push "Jn\n"
+    call print_string
+    call read_integer
+    ret
+execute_ret:
+    push "Ret\n"
+    call print_string
+    ret
+execute_end:
+    push "End\n"
+    call print_string
+    end
+
+execute_printc:
+    push "Printc\n"
+    call print_string
+    ret
+execute_printi:
+    push "Printi\n"
+    call print_string
+    ret
+execute_readc:
+    push "Readc\n"
+    call print_string
+    ret
+execute_readi:
+    push "Readi\n"
+    call print_string
+    ret
+
+read_char:
+    push 0
+    dup
+    readc
+    retrieve
+    ret
+
+# Read up to [LF]
+read_integer:
+    call read_char
+    dup
+    push '\n'
+    sub
+    jz .read_integer_end
+    jmp read_integer
+.read_integer_end:
+    ret
+
+print_string:
+    dup
+    jz .print_string_end
+    printc
+    jmp print_string
+.print_string_end:
+    drop
+    ret
