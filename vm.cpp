@@ -127,7 +127,7 @@ namespace WS {
     }
     // Call a subroutine
     void VM::instrCall(integer_t label) {
-        call_stack_.push(pc_);
+        call_stack_.push(pc_ + 1);
         pc_ = labels_[label];
     }
     // Jump unconditionally to a label
@@ -174,14 +174,16 @@ namespace WS {
     }
     // Read a character and place it in the location given by the top of the stack
     void VM::instrReadC() {
-        push(getchar());
+        char c;
+        scanf("%c", &c);
+        heap_[pop()] = (integer_t) c;
         pc_++;
     }
     // 	Read a number and place it in the location given by the top of the stack
     void VM::instrReadI() {
         integer_t integer;
         scanf("%lld", &integer);
-        push(integer);
+        heap_[pop()] = integer;
         pc_++;
     }
 
