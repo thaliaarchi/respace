@@ -1,3 +1,4 @@
+# https://stackoverflow.com/a/2481326/3238709
 CC=gcc
 CXX=g++
 RM=rm -f
@@ -5,7 +6,7 @@ CPPFLAGS=-Wall -g -std=c++11 #$(shell root-config --cflags)
 LDFLAGS=-Wall -g -std=c++11 #$(shell root-config --ldflags)
 LDLIBS=#$(shell root-config --libs)
 
-SRCS=main.cpp parser.cpp reader.cpp vm.cpp writer.cpp
+SRCS=src/main.cpp src/parser.cpp src/reader.cpp src/vm.cpp src/writer.cpp
 OBJS=$(subst .cpp,.o,$(SRCS))
 
 all: wspace
