@@ -484,6 +484,7 @@ read_char:
     jz .read_char_end
     ret
 .read_char_end:
+    drop
     end
 
 read_integer:
@@ -546,6 +547,7 @@ read_unsigned:
     jz .read_unsigned_end
 
     # default: ignore character
+    swap
     jmp .read_unsigned_loop
 
 .read_unsigned_0:
@@ -577,13 +579,15 @@ print_string:
 
 print_instr:
     call .print_instr
-    push "\n"
+    push '\n'
     printc
     ret
 
 .print_instr:
-    push "    "
-    call print_string
+    push ' '
+    push ' '
+    push ' '
+    push ' '
     call print_string
     ret
 
