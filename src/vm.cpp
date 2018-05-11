@@ -38,6 +38,9 @@ namespace WS {
             case READC:  instrReadC(); break;
             case READI:  instrReadI(); break;
 
+            case DEBUG_PRINTSTACK: instrDebugPrintStack(); break;
+            case DEBUG_PRINTHEAP:  instrDebugPrintHeap(); break;
+
             case INVALID_INSTR: throw "Invalid instruction!";
             }
         }
@@ -127,7 +130,7 @@ namespace WS {
     }
     // Call a subroutine
     void VM::instrCall(integer_t label) {
-        call_stack_.push(pc_ + 1);
+        call_stack_.push(pc_);
         pc_ = labels_[label];
     }
     // Jump unconditionally to a label
@@ -154,7 +157,7 @@ namespace WS {
     }
     // End a subroutine and transfer control back to the caller
     void VM::instrRet() {
-        pc_ = call_stack_.top();
+        pc_ = call_stack_.top() + 1;
         call_stack_.pop();
     }
     // End the program
@@ -185,6 +188,28 @@ namespace WS {
         scanf("%lld", &integer);
         heap_[pop()] = integer;
         pc_++;
+    }
+
+    // Print contents of stack
+    void VM::instrDebugPrintStack() {
+        putchar('[');
+        for (size_t i = 0; i < stack_.size(); i++) {
+            printf(" %llu", stack_.at(i));
+        }
+        puts(" ]");
+    }
+    // Print contents of heap
+    void VM::instrDebugPrintHeap() {
+        std::map<integer_t, integer_t>::iterator iter = heap_.begin();
+        putchar('{');
+        if (iter != heap_.end()) {
+            printf(" %lld: %lld", iter->first, iter->second);
+            ++iter;
+        }
+        for (; iter != heap_.end(); ++iter) {
+            printf(", %lld: %lld", iter->first, iter->second);
+        }
+        puts(" }");
     }
 
     // Private

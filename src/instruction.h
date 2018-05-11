@@ -34,6 +34,9 @@ namespace WS {
         PRINTI, // [Space][Tab]     Output the number at the top of the stack
         READC,  // [Tab][Space]     Read a character and place it in the location given by the top of the stack
         READI,  // [Tab][Tab]       Read a number and place it in the location given by the top of the stack
+        // Debugging in assembly only
+        DEBUG_PRINTSTACK,
+        DEBUG_PRINTHEAP,
         // Invalid Instruction
         INVALID_INSTR = -1
     };

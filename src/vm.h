@@ -44,6 +44,9 @@ namespace WS {
         void instrReadC();
         void instrReadI();
 
+        void instrDebugPrintStack();
+        void instrDebugPrintHeap();
+
     private:
         std::vector<Instruction> instructions_;
         std::vector<integer_t> stack_;

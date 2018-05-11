@@ -53,6 +53,9 @@ void assemble(const char* in, const char* out) {
         case READC:    fprintf(out_file, "\treadc"); break;
         case READI:    fprintf(out_file, "\treadi"); break;
 
+        case DEBUG_PRINTSTACK: fprintf(out_file, "\tdebug_printstack"); break;
+        case DEBUG_PRINTHEAP:  fprintf(out_file, "\tdebug_printheap"); break;
+
         case INVALID_INSTR: if (!parser.isEOF()) fprintf(out_file, "ERROR!"); break;
         }
         fputc('\n', out_file);
