@@ -9,10 +9,10 @@ LDLIBS=#$(shell root-config --libs)
 SRCS=src/main.cpp src/parser.cpp src/reader.cpp src/vm.cpp src/writer.cpp
 OBJS=$(subst .cpp,.o,$(SRCS))
 
-all: wspace
+all: respace
 
-wspace: $(OBJS)
-	$(CXX) $(LDFLAGS) -o wspace $(OBJS) $(LDLIBS)
+respace: $(OBJS)
+	$(CXX) $(LDFLAGS) -o respace $(OBJS) $(LDLIBS)
 
 depend: .depend
 
