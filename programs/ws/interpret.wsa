@@ -11,20 +11,34 @@ interpret_loop:
     dup
     retrieve
 
-    dup
-    push INSTR_PUSH
-    sub
-    jz interpret_push
+    dup; push INSTR_PUSH;   sub; jz interpret_push
+    dup; push INSTR_DUP;    sub; jz interpret_dup
+    dup; push INSTR_COPY;   sub; jz interpret_copy
+    dup; push INSTR_SWAP;   sub; jz interpret_swap
+    dup; push INSTR_DROP;   sub; jz interpret_drop
+    dup; push INSTR_SLIDE;  sub; jz interpret_slide
 
-    dup
-    push INSTR_PRINTC
-    sub
-    jz interpret_printc
+    dup; push INSTR_ADD;    sub; jz interpret_add
+    dup; push INSTR_SUB;    sub; jz interpret_sub
+    dup; push INSTR_MUL;    sub; jz interpret_mul
+    dup; push INSTR_DIV;    sub; jz interpret_div
+    dup; push INSTR_MOD;    sub; jz interpret_mod
 
-    dup
-    push INSTR_END
-    sub
-    jz interpret_end
+    dup; push INSTR_STORE;  sub; jz interpret_store
+    dup; push INSTR_RETRIEVE; sub; jz interpret_retrieve
+
+    dup; push INSTR_LABEL;  sub; jz interpret_label
+    dup; push INSTR_CALL;   sub; jz interpret_call
+    dup; push INSTR_JMP;    sub; jz interpret_jmp
+    dup; push INSTR_JZ;     sub; jz interpret_jz
+    dup; push INSTR_JN;     sub; jz interpret_jn
+    dup; push INSTR_RET;    sub; jz interpret_ret
+    dup; push INSTR_END;    sub; jz interpret_end
+    dup; push INSTR_PRINTC; sub; jz interpret_printc
+    dup; push INSTR_PRINTI; sub; jz interpret_printi
+
+    dup; push INSTR_READC;  sub; jz interpret_readc
+    dup; push INSTR_READI;  sub; jz interpret_readi
 
     drop
     push "No instruction matched.\n"
