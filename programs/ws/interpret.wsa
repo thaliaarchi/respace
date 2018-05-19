@@ -1,0 +1,255 @@
+parse_end:
+    # Reset stack pointer
+    push INSTR_PTR
+    push INSTR_STACK_START
+    store
+
+interpret_loop:
+    push INSTR_PTR
+    dup
+    retrieve
+    dup
+    retrieve
+
+    dup
+    push INSTR_PUSH
+    sub
+    jz interpret_push
+
+    dup
+    push INSTR_PRINTC
+    sub
+    jz interpret_printc
+
+    dup
+    push INSTR_END
+    sub
+    jz interpret_end
+
+    drop
+    push "No instruction matched.\n"
+    call print_string
+
+interpret_loop_footer:
+    # Increment instruction pointer
+    push 2
+    add
+    store
+
+    jmp interpret_loop
+
+interpret_push:
+    drop
+    call get_instr_integer
+
+    push "PUSH"
+    call print_string
+
+    # Store in stack
+    push STACK_TOP
+    retrieve
+    swap
+    store
+
+    jmp interpret_loop_footer
+
+interpret_printc:
+    drop
+    call get_instr_integer
+    printc
+
+    push "PRINTC"
+    call print_string
+
+    jmp interpret_loop_footer
+
+# TODO: cleanup stack
+interpret_end:
+    drop
+    push "END"
+    call print_string
+    end
+
+# TODO: Should really be incrementing stack top
+inc_instr_ptr:
+    push INSTR_PTR
+    dup
+    retrieve
+    push 2
+    add
+    store
+    ret
+
+# Retrieve integer to push
+get_instr_integer:
+    dup
+    push 1
+    add
+    retrieve
+    ret
+
+instr_push:
+    push "push"
+    call print_instr
+
+    push INSTR_PTR
+    retrieve
+    dup
+    push INSTR_PUSH
+    store
+    push 1
+    add
+    swap
+    call read_integer
+    swap
+    drop
+    store
+    # push garbage because the read character will be discarded
+    push 99
+    jmp inc_instr_ptr
+
+instr_dup:
+    push INSTR_PTR
+    retrieve
+    push INSTR_DUP
+    store
+    jmp inc_instr_ptr
+
+instr_copy:
+    push INSTR_PTR
+    retrieve
+    push INSTR_COPY
+    store
+    jmp inc_instr_ptr
+
+instr_swap:
+    push INSTR_PTR
+    retrieve
+    push INSTR_SWAP
+    store
+    jmp inc_instr_ptr
+
+instr_drop:
+    push "drop"
+    jmp print_instr
+instr_slide:
+    push "slide"
+    jmp print_instr_integer
+
+instr_add:
+    push "add"
+    jmp print_instr
+instr_sub:
+    push "sub"
+    jmp print_instr
+instr_mul:
+    push "mul"
+    jmp print_instr
+instr_div:
+    push "div"
+    jmp print_instr
+instr_mod:
+    push "mod"
+    jmp print_instr
+
+instr_store:
+    push "store"
+    jmp print_instr
+instr_retrieve:
+    push "retrieve"
+    jmp print_instr
+
+instr_label:
+    push "label_"
+    call print_string
+    call read_unsigned
+    printi
+    push '\n'
+    push ':'
+    printc
+    printc
+    ret
+instr_call:
+    push "call"
+    jmp print_instr_unsigned
+instr_jmp:
+    push "jmp"
+    jmp print_instr_unsigned
+instr_jz:
+    push "jz"
+    jmp print_instr_unsigned
+instr_jn:
+    push "jn"
+    jmp print_instr_unsigned
+instr_ret:
+    push "ret"
+    jmp print_instr
+instr_end:
+    push INSTR_PTR
+    retrieve
+    push INSTR_END
+    store
+    jmp inc_instr_ptr
+
+instr_printc:
+    push "printc"
+    call print_instr
+
+    push INSTR_PTR
+    retrieve
+    push INSTR_PRINTC
+    store
+    jmp inc_instr_ptr
+
+instr_printi:
+    push "printi"
+    jmp print_instr
+instr_readc:
+    push "readc"
+    jmp print_instr
+instr_readi:
+    push "readi"
+    jmp print_instr
+
+print_string:
+    dup
+    jz .print_string_end
+    printc
+    jmp print_string
+.print_string_end:
+    drop
+    ret
+
+print_instr:
+    call .print_instr
+    push '\n'
+    printc
+    ret
+
+.print_instr:
+    push ' '
+    dup
+    dup
+    dup
+    call print_string
+    ret
+
+print_instr_integer:
+    call .print_instr
+    push ' '
+    printc
+    call read_integer
+    printi
+    push '\n'
+    printc
+    ret
+
+print_instr_unsigned:
+    call .print_instr
+    push ' '
+    printc
+    call read_unsigned
+    printi
+    push '\n'
+    printc
+    ret

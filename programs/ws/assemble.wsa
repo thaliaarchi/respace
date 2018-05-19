@@ -1,0 +1,128 @@
+    #include "parse.wsa"
+
+instr_push:
+    push "push"
+    jmp print_instr_integer
+instr_dup:
+    push "dup"
+    jmp print_instr
+instr_copy:
+    push "copy"
+    jmp print_instr_integer
+instr_swap:
+    push "swap"
+    jmp print_instr
+instr_drop:
+    push "drop"
+    jmp print_instr
+instr_slide:
+    push "slide"
+    jmp print_instr_integer
+
+instr_add:
+    push "add"
+    jmp print_instr
+instr_sub:
+    push "sub"
+    jmp print_instr
+instr_mul:
+    push "mul"
+    jmp print_instr
+instr_div:
+    push "div"
+    jmp print_instr
+instr_mod:
+    push "mod"
+    jmp print_instr
+
+instr_store:
+    push "store"
+    jmp print_instr
+instr_retrieve:
+    push "retrieve"
+    jmp print_instr
+
+instr_label:
+    push "label_"
+    call print_string
+    call read_unsigned
+    printi
+    push '\n'
+    push ':'
+    printc
+    printc
+    ret
+instr_call:
+    push "call"
+    jmp print_instr_unsigned
+instr_jmp:
+    push "jmp"
+    jmp print_instr_unsigned
+instr_jz:
+    push "jz"
+    jmp print_instr_unsigned
+instr_jn:
+    push "jn"
+    jmp print_instr_unsigned
+instr_ret:
+    push "ret"
+    jmp print_instr
+instr_end:
+    push "end"
+    jmp print_instr
+
+instr_printc:
+    push "printc"
+    jmp print_instr
+instr_printi:
+    push "printi"
+    jmp print_instr
+instr_readc:
+    push "readc"
+    jmp print_instr
+instr_readi:
+    push "readi"
+    jmp print_instr
+
+print_string:
+    dup
+    jz .print_string_end
+    printc
+    jmp print_string
+.print_string_end:
+    drop
+    ret
+
+print_instr:
+    call .print_instr
+    push '\n'
+    printc
+    ret
+
+.print_instr:
+    push ' '
+    dup
+    dup
+    dup
+    call print_string
+    ret
+
+print_instr_integer:
+    call .print_instr
+    push ' '
+    printc
+    call read_integer
+    printi
+    push '\n'
+    printc
+    ret
+
+print_instr_unsigned:
+    call .print_instr
+    push ' '
+    printc
+    call read_unsigned
+    printi
+    push '\n'
+    printc
+    ret

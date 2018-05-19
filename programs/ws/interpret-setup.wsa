@@ -1,0 +1,21 @@
+    # Init variables
+
+    push INSTR_PTR
+    push INSTR_STACK_START
+    store
+
+    push STACK_TOP
+    push STACK_START
+    store
+
+    push HEAP_TOP
+    push HEAP_START
+    store
+
+    push CALL_STACK_TOP
+    push CALL_STACK_START
+    store
+
+    push LABELS_TOP
+    push LABELS_START
+    store

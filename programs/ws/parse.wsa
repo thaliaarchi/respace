@@ -1,0 +1,485 @@
+# Press ^D to exit input
+
+.parse_loop:
+    call parse
+    jmp .parse_loop
+
+parse:
+    call read_char
+
+    # case [Space]: Stack Manipulation
+    dup
+    push ' '
+    sub
+    jz parse_stack
+
+    # case [Tab]: Arithmetic, Heap Access, or I/O
+    dup
+    push '\t'
+    sub
+    jz .parse_tab
+
+    # case [LF]: Flow Control
+    dup
+    push '\n'
+    sub
+    jz parse_flow
+
+    # default: ignore character
+    jmp parse
+
+.parse_tab:
+    call read_char
+
+    # case [Tab][Space]: Arithmetic
+    dup
+    push ' '
+    sub
+    jz parse_arith
+
+    # case [Tab][Tab]: Heap Access
+    dup
+    push '\t'
+    sub
+    jz parse_heap
+
+    # case [Tab][LF]: I/O
+    dup
+    push '\n'
+    sub
+    jz parse_io
+
+    # default: ignore character
+    jmp .parse_tab
+
+parse_stack:
+    call read_char
+
+    # case [Space]: push
+    dup
+    push ' '
+    sub
+    jz instr_push
+
+    # case [Tab]: copy, slide, or invalid instruction
+    dup
+    push '\t'
+    sub
+    jz .parse_stack_tab
+
+    # case [LF]: dup, swap, or drop
+    dup
+    push '\n'
+    sub
+    jz .parse_stack_lf
+
+    # default: ignore character
+    jmp parse_stack
+
+.parse_stack_tab:
+    call read_char
+
+    # case [Tab][Space]: copy
+    dup
+    push ' '
+    sub
+    jz instr_copy
+
+    # case [Tab][Tab]: invalid instruction
+    dup
+    push '\t'
+    sub
+    jz invalid_instr
+
+    # case [Tab][LF]: slide
+    dup
+    push '\n'
+    sub
+    jz instr_slide
+
+    # default: ignore character
+    jmp .parse_stack_tab
+
+.parse_stack_lf:
+    call read_char
+
+    # case [LF][Space]: dup
+    dup
+    push ' '
+    sub
+    jz instr_dup
+
+    # case [LF][Tab]: swap
+    dup
+    push '\t'
+    sub
+    jz instr_swap
+
+    # case [LF][LF]: drop
+    dup
+    push '\n'
+    sub
+    jz instr_drop
+
+    # default: ignore character
+    jmp .parse_stack_lf
+
+parse_arith:
+    call read_char
+
+    # case [Space]: add, sub, or mul
+    dup
+    push ' '
+    sub
+    jz .parse_arith_space
+
+    # case [Tab]: div, mod, or invalid
+    dup
+    push '\t'
+    sub
+    jz .parse_arith_tab
+
+    # case [LF]: invalid instruction
+    dup
+    push '\n'
+    sub
+    jz .invalid_instr
+
+    # default: ignore character
+    jmp parse_arith
+
+.parse_arith_space:
+    call read_char
+
+    # case [Space][Space]: add
+    dup
+    push ' '
+    sub
+    jz instr_add
+
+    # case [Space][Tab]: sub
+    dup
+    push '\t'
+    sub
+    jz instr_sub
+
+    # case [Space][LF]: mul
+    dup
+    push '\n'
+    sub
+    jz instr_mul
+
+    # default: ignore character
+    jmp .parse_arith_space
+
+.parse_arith_tab:
+    call read_char
+
+    # case [Tab][Space]: div
+    dup
+    push ' '
+    sub
+    jz instr_div
+
+    # case [Tab][Tab]: mod
+    dup
+    push '\t'
+    sub
+    jz instr_mod
+
+    # case [Tab][LF]: invalid instruction
+    dup
+    push '\n'
+    sub
+    jz .invalid_instr
+
+    # default: ignore character
+    jmp .parse_arith_tab
+
+parse_heap:
+    call read_char
+
+    # case [Space]: store
+    dup
+    push ' '
+    sub
+    jz instr_store
+
+    # case [Tab]: retrieve
+    dup
+    push '\t'
+    sub
+    jz instr_retrieve
+
+    # case [LF]: invalid instruction
+    dup
+    push '\n'
+    sub
+    jz invalid_instr
+
+    # default: ignore character
+    jmp parse_heap
+
+parse_flow:
+    call read_char
+
+    # case [Space]: label, call, or jump
+    dup
+    push ' '
+    sub
+    jz .parse_flow_space
+
+    # case [Tab]: jz, jn, or ret
+    dup
+    push '\t'
+    sub
+    jz .parse_flow_tab
+
+    # case [LF]: end or invalid instruction
+    dup
+    push '\n'
+    sub
+    jz .parse_flow_lf
+
+    # default: ignore character
+    jmp parse_flow
+
+.parse_flow_space:
+    call read_char
+
+    # case [Space][Space]: label
+    dup
+    push ' '
+    sub
+    jz instr_label
+
+    # case [Space][Tab]: call
+    dup
+    push '\t'
+    sub
+    jz instr_call
+
+    # case [Space][LF]: jmp
+    dup
+    push '\n'
+    sub
+    jz instr_jmp
+
+    # default: ignore character
+    jmp .parse_flow_space
+
+.parse_flow_tab:
+    call read_char
+
+    # case [Tab][Space]: jz
+    dup
+    push ' '
+    sub
+    jz instr_jz
+
+    # case [Tab][Tab]: jn
+    dup
+    push '\t'
+    sub
+    jz instr_jn
+
+    # case [Tab][LF]: ret
+    dup
+    push '\n'
+    sub
+    jz instr_ret
+
+    # default: ignore character
+    jmp .parse_flow_tab
+
+.parse_flow_lf:
+    call read_char
+
+    # case [LF][Space]: invalid instruction
+    dup
+    push ' '
+    sub
+    jz invalid_instr
+
+    # case [LF][Tab]: invalid instruction
+    dup
+    push '\t'
+    sub
+    jz invalid_instr
+
+    # case [LF][LF]: end
+    dup
+    push '\n'
+    sub
+    jz instr_end
+
+    # default: ignore character
+    jmp .parse_flow_lf
+
+parse_io:
+    call read_char
+
+    # case [Space]: printc, printi, or invalid
+    dup
+    push ' '
+    sub
+    jz .parse_io_space
+
+    # case [Tab]: readc, readi, or invalid
+    dup
+    push '\t'
+    sub
+    jz .parse_io_tab:
+
+    # case [LF]: invalid instruction
+    dup
+    push '\n'
+    sub
+    jz invalid_instr
+
+    # default: ignore character
+    jmp parse_io
+
+.parse_io_space:
+    call read_char
+
+    # case [Space][Space]: printc
+    dup
+    push ' '
+    sub
+    jz instr_printc
+
+    # case [Space][Tab]: printi
+    dup
+    push '\t'
+    sub
+    jz instr_printi
+
+    # case [Space][LF]: invalid instruction
+    dup
+    push '\n'
+    sub
+    jz invalid_instr
+
+    # default: ignore character
+    jmp .parse_io_space
+
+.parse_io_tab:
+    call read_char
+
+    # case [Tab][Space]: readc
+    dup
+    push ' '
+    sub
+    jz instr_readc
+
+    # case [Tab][Tab]: readi
+    dup
+    push '\t'
+    sub
+    jz instr_readi
+
+    # case [Tab][LF]: invalid instruction
+    dup
+    push '\n'
+    sub
+    jz invalid_instr
+
+    # default: ignore character
+    jmp .parse_io_tab
+
+read_char:
+    drop
+    push 0
+    dup
+    readc
+    retrieve
+
+    # Check for NUL and exit input
+    dup
+    jz .read_char_end
+    ret
+.read_char_end:
+    drop
+    call parse_end
+
+read_integer:
+    call read_char
+
+    # case [Space]: positive integer
+    dup
+    push ' '
+    sub
+    jz read_unsigned
+
+    # case [Tab]: negative integer
+    dup
+    push '\t'
+    sub
+    jz .read_integer_negative
+
+    # case [LF]: zero
+    dup
+    push '\n'
+    sub
+    jz .read_integer_zero
+
+    # default: ignore character
+    jmp read_integer
+
+.read_integer_negative:
+    call read_unsigned
+    push -1
+    mul
+    ret
+
+.read_integer_zero:
+    push 0
+    ret
+
+read_unsigned:
+    push 0
+
+.read_unsigned_loop:
+    swap
+    call read_char
+
+    # case [Space]: insert 0 into integer
+    dup
+    push ' '
+    sub
+    jz .read_unsigned_0
+
+    # case [Tab]: insert 1 into integer
+    dup
+    push '\t'
+    sub
+    jz .read_unsigned_1
+
+    # case [LF]: terminate integer
+    dup
+    push '\n'
+    sub
+    jz .read_unsigned_end
+
+    # default: ignore character
+    swap
+    jmp .read_unsigned_loop
+
+.read_unsigned_0:
+    swap
+    push 2
+    mul
+    jmp .read_unsigned_loop
+
+.read_unsigned_1:
+    swap
+    push 2
+    mul
+    push 1
+    add
+    jmp .read_unsigned_loop
+
+.read_unsigned_end:
+    swap
+    ret
