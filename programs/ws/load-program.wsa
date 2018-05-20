@@ -16,9 +16,15 @@ get_instr_integer:
     retrieve
     ret
 
+load_instr:
+    push INSTR_PTR
+    retrieve
+    swap
+    store
+    jmp inc_instr_ptr
+
 instr_push:
-    push "push"
-    call print_instr
+    push "push"; call print_instr
 
     push INSTR_PTR
     retrieve
@@ -37,63 +43,51 @@ instr_push:
     jmp inc_instr_ptr
 
 instr_dup:
-    push INSTR_PTR
-    retrieve
-    push INSTR_DUP
-    store
-    jmp inc_instr_ptr
-
+    push "dup";        call print_instr
+    push INSTR_DUP;    jmp load_instr
 instr_copy:
-    push INSTR_PTR
-    retrieve
-    push INSTR_COPY
-    store
-    jmp inc_instr_ptr
-
+    push "copy";       call print_instr
+    push INSTR_COPY;   jmp load_instr
 instr_swap:
-    push INSTR_PTR
-    retrieve
-    push INSTR_SWAP
-    store
-    jmp inc_instr_ptr
-
+    push "swap";       call print_instr
+    push INSTR_SWAP;   jmp load_instr
 instr_drop:
-    push "drop"
-    jmp print_instr
+    push "drop";       call print_instr
+    push INSTR_DROP;   jmp load_instr
 instr_slide:
     push "slide"
     jmp print_instr_integer
 
 instr_add:
-    push "add"
-    jmp print_instr
+    push "add";        call print_instr
+    push INSTR_ADD;    jmp load_instr
 instr_sub:
-    push "sub"
-    jmp print_instr
+    push "sub";        call print_instr
+    push INSTR_SUB;    jmp load_instr
 instr_mul:
-    push "mul"
-    jmp print_instr
+    push "mul";        call print_instr
+    push INSTR_MUL;    jmp load_instr
 instr_div:
-    push "div"
-    jmp print_instr
+    push "div";        call print_instr
+    push INSTR_DIV;    jmp load_instr
 instr_mod:
-    push "mod"
-    jmp print_instr
+    push "mod";        call print_instr
+    push INSTR_MOD;    jmp load_instr
 
 instr_store:
-    push "store"
-    jmp print_instr
+    push "store";      call print_instr
+    push INSTR_STORE;  jmp load_instr
 instr_retrieve:
-    push "retrieve"
-    jmp print_instr
+    push "retrieve";   call print_instr
+    push INSTR_RETRIEVE; jmp load_instr
 
 instr_label:
     push "label_"
     call print_string
     call read_unsigned
     printi
-    push '\n'
     push ':'
+    push '\n'
     printc
     printc
     ret
@@ -110,34 +104,24 @@ instr_jn:
     push "jn"
     jmp print_instr_unsigned
 instr_ret:
-    push "ret"
-    jmp print_instr
+    push "ret";        call print_instr
+    push INSTR_RET;    jmp load_instr
 instr_end:
-    push INSTR_PTR
-    retrieve
-    push INSTR_END
-    store
-    jmp inc_instr_ptr
+    push "end";        call print_instr;
+    push INSTR_END;    jmp load_instr
 
 instr_printc:
-    push "printc"
-    call print_instr
-
-    push INSTR_PTR
-    retrieve
-    push INSTR_PRINTC
-    store
-    jmp inc_instr_ptr
-
+    push "printc";     call print_instr
+    push INSTR_PRINTC; jmp load_instr
 instr_printi:
-    push "printi"
-    jmp print_instr
+    push "printi";     call print_instr
+    push INSTR_PRINTI; jmp load_instr
 instr_readc:
-    push "readc"
-    jmp print_instr
+    push "readc";      call print_instr
+    push INSTR_READC;  jmp load_instr
 instr_readi:
-    push "readi"
-    jmp print_instr
+    push "readi";      call print_instr
+    push INSTR_READI;  jmp load_instr
 
 @include "../util/print-string.wsa"
 
@@ -149,9 +133,7 @@ print_instr:
 
 .print_instr:
     push ' '
-    dup
-    dup
-    dup
+    dup; dup; dup
     call print_string
     ret
 

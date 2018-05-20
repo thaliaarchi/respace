@@ -44,7 +44,7 @@ interpret_loop:
     push "No instruction matched.\n"
     call print_string
 
-interpret_loop_footer:
+.interpret_loop_footer:
     # Increment instruction pointer
     push 2
     add
@@ -56,8 +56,7 @@ interpret_push:
     drop
     call get_instr_integer
 
-    push "PUSH"
-    call print_string
+    push "PUSH,"; call print_string
 
     # Store in stack
     push STACK_TOP
@@ -65,21 +64,124 @@ interpret_push:
     swap
     store
 
-    jmp interpret_loop_footer
+    jmp .interpret_loop_footer
+
+interpret_dup:
+    drop
+    push "DUP,"; call print_string
+    jmp .interpret_loop_footer
+
+interpret_copy:
+    drop
+    push "COPY,"; call print_string
+    jmp .interpret_loop_footer
+
+interpret_swap:
+    drop
+    push "SWAP,"; call print_string
+    jmp .interpret_loop_footer
+
+interpret_drop:
+    drop
+    push "DROP,"; call print_string
+    jmp .interpret_loop_footer
+
+interpret_slide:
+    drop
+    push "SLIDE,"; call print_string
+    jmp .interpret_loop_footer
+
+interpret_add:
+    drop
+    push "ADD,"; call print_string
+    jmp .interpret_loop_footer
+
+interpret_sub:
+    drop
+    push "SUB,"; call print_string
+    jmp .interpret_loop_footer
+
+interpret_mul:
+    drop
+    push "MUL,"; call print_string
+    jmp .interpret_loop_footer
+
+interpret_div:
+    drop
+    push "DIV,"; call print_string
+    jmp .interpret_loop_footer
+
+interpret_mod:
+    drop
+    push "MOD,"; call print_string
+    jmp .interpret_loop_footer
+
+interpret_store:
+    drop
+    push "STORE,"; call print_string
+    jmp .interpret_loop_footer
+
+interpret_retrieve:
+    drop
+    push "RETRIEVE,"; call print_string
+    jmp .interpret_loop_footer
+
+interpret_label:
+    drop
+    push "LABEL,"; call print_string
+    jmp .interpret_loop_footer
+
+interpret_call:
+    drop
+    push "CALL,"; call print_string
+    jmp .interpret_loop_footer
+
+interpret_jmp:
+    drop
+    push "JMP,"; call print_string
+    jmp .interpret_loop_footer
+
+interpret_jz:
+    drop
+    push "JZ,"; call print_string
+    jmp .interpret_loop_footer
+
+interpret_jn:
+    drop
+    push "JN,"; call print_string
+    jmp .interpret_loop_footer
+
+interpret_ret:
+    drop
+    push "RET,"; call print_string
+    jmp .interpret_loop_footer
+
+# TODO: cleanup stack
+interpret_end:
+    drop
+    push "END,"; call print_string
+    end
 
 interpret_printc:
     drop
     call get_instr_integer
     printc
+    push "PRINTC,"; call print_string
+    jmp .interpret_loop_footer
 
-    push "PRINTC"
-    call print_string
-
-    jmp interpret_loop_footer
-
-# TODO: cleanup stack
-interpret_end:
+interpret_printi:
     drop
-    push "END"
-    call print_string
-    end
+    call get_instr_integer
+    printi
+    push "PRINTI,"; call print_string
+    jmp .interpret_loop_footer
+
+interpret_readc:
+    drop
+    push "READC,"; call print_string
+    jmp .interpret_loop_footer
+
+interpret_readi:
+    drop
+    push "READI,"; call print_string
+    jmp .interpret_loop_footer
