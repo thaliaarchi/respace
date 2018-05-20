@@ -176,11 +176,11 @@ int main(int argc, char* argv[]) {
             printf("ERROR: %s", e);
         }
     }
-    toBinary("programs/ws-assemble.generated.ws", "programs/ws-assemble.out.wsx");
+    /*toBinary("programs/ws-assemble.generated.ws", "programs/ws-assemble.out.wsx");
     assemble("programs/hello-world.ws", "programs/hello-world.out.wsa");
     toBinary("programs/hello-world.ws", "programs/hello-world.out.wsx");
     fromBinary("programs/hello-world.out.wsx", "programs/hello-world.out.ws");
-    interpret("programs/hello-world.ws");
+    interpret("programs/hello-world.ws");*/
     //bottles();
     //count(1, 10);
 #ifdef _WIN32
