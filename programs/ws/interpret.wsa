@@ -185,3 +185,11 @@ interpret_readi:
     drop
     push "READI,"; call print_string
     jmp .interpret_loop_footer
+
+# Retrieve integer to push
+get_instr_integer:
+    dup
+    push 1
+    add
+    retrieve
+    ret

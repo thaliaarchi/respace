@@ -8,14 +8,6 @@ inc_instr_ptr:
     store
     ret
 
-# Retrieve integer to push
-get_instr_integer:
-    dup
-    push 1
-    add
-    retrieve
-    ret
-
 load_instr:
     push INSTR_PTR
     retrieve
@@ -23,13 +15,12 @@ load_instr:
     store
     jmp inc_instr_ptr
 
-instr_push:
-    push "push"; call print_instr
-
+load_instr_integer:
     push INSTR_PTR
     retrieve
     dup
-    push INSTR_PUSH
+    # Get the given instruction ID
+    copy 2
     store
     push 1
     add
@@ -38,90 +29,56 @@ instr_push:
     swap
     drop
     store
-    # push garbage because the read character will be discarded
-    push 99
+    # Push garbage because the read character will be discarded
+    # push 99 # The argument works for this filler item now
     jmp inc_instr_ptr
 
-instr_dup:
-    push "dup";        call print_instr
-    push INSTR_DUP;    jmp load_instr
-instr_copy:
-    push "copy";       call print_instr
-    push INSTR_COPY;   jmp load_instr
-instr_swap:
-    push "swap";       call print_instr
-    push INSTR_SWAP;   jmp load_instr
-instr_drop:
-    push "drop";       call print_instr
-    push INSTR_DROP;   jmp load_instr
-instr_slide:
-    push "slide"
-    jmp print_instr_integer
-
-instr_add:
-    push "add";        call print_instr
-    push INSTR_ADD;    jmp load_instr
-instr_sub:
-    push "sub";        call print_instr
-    push INSTR_SUB;    jmp load_instr
-instr_mul:
-    push "mul";        call print_instr
-    push INSTR_MUL;    jmp load_instr
-instr_div:
-    push "div";        call print_instr
-    push INSTR_DIV;    jmp load_instr
-instr_mod:
-    push "mod";        call print_instr
-    push INSTR_MOD;    jmp load_instr
-
-instr_store:
-    push "store";      call print_instr
-    push INSTR_STORE;  jmp load_instr
-instr_retrieve:
-    push "retrieve";   call print_instr
-    push INSTR_RETRIEVE; jmp load_instr
-
-instr_label:
-    push "label_"
-    call print_string
+load_instr_unsigned:
+    push INSTR_PTR
+    retrieve
+    dup
+    # Get the given instruction ID
+    copy 2
+    store
+    push 1
+    add
+    swap
     call read_unsigned
-    printi
-    push ':'
-    push '\n'
-    printc
-    printc
-    ret
-instr_call:
-    push "call"
-    jmp print_instr_unsigned
-instr_jmp:
-    push "jmp"
-    jmp print_instr_unsigned
-instr_jz:
-    push "jz"
-    jmp print_instr_unsigned
-instr_jn:
-    push "jn"
-    jmp print_instr_unsigned
-instr_ret:
-    push "ret";        call print_instr
-    push INSTR_RET;    jmp load_instr
-instr_end:
-    push "end";        call print_instr;
-    push INSTR_END;    jmp load_instr
+    swap
+    drop
+    store
+    # Push garbage because the read character will be discarded
+    # push 99 # The argument works for this filler item now
+    jmp inc_instr_ptr
 
-instr_printc:
-    push "printc";     call print_instr
-    push INSTR_PRINTC; jmp load_instr
-instr_printi:
-    push "printi";     call print_instr
-    push INSTR_PRINTI; jmp load_instr
-instr_readc:
-    push "readc";      call print_instr
-    push INSTR_READC;  jmp load_instr
-instr_readi:
-    push "readi";      call print_instr
-    push INSTR_READI;  jmp load_instr
+instr_push:   push "push";   call print_instr; push INSTR_PUSH;   jmp load_instr_integer
+instr_dup:    push "dup";    call print_instr; push INSTR_DUP;    jmp load_instr
+instr_copy:   push "copy";   call print_instr; push INSTR_COPY;   jmp load_instr_integer
+instr_swap:   push "swap";   call print_instr; push INSTR_SWAP;   jmp load_instr
+instr_drop:   push "drop";   call print_instr; push INSTR_DROP;   jmp load_instr
+instr_slide:  push "slide";  call print_instr; push INSTR_SLIDE;  jmp load_instr_integer
+
+instr_add:    push "add";    call print_instr; push INSTR_ADD;    jmp load_instr
+instr_sub:    push "sub";    call print_instr; push INSTR_SUB;    jmp load_instr
+instr_mul:    push "mul";    call print_instr; push INSTR_MUL;    jmp load_instr
+instr_div:    push "div";    call print_instr; push INSTR_DIV;    jmp load_instr
+instr_mod:    push "mod";    call print_instr; push INSTR_MOD;    jmp load_instr
+
+instr_store:  push "store";  call print_instr; push INSTR_STORE;  jmp load_instr
+instr_retrieve: push "retrieve"; call print_instr; push INSTR_RETRIEVE; jmp load_instr
+
+instr_label:  push "label";  call print_instr; push INSTR_LABEL;  jmp load_instr_unsigned
+instr_call:   push "call";   call print_instr; push INSTR_CALL;   jmp load_instr_unsigned
+instr_jmp:    push "jmp";    call print_instr; push INSTR_JMP;    jmp load_instr_unsigned
+instr_jz:     push "jz";     call print_instr; push INSTR_JZ;     jmp load_instr_unsigned
+instr_jn:     push "jn";     call print_instr; push INSTR_JN;     jmp load_instr_unsigned
+instr_ret:    push "ret";    call print_instr; push INSTR_RET;    jmp load_instr
+instr_end:    push "end";    call print_instr; push INSTR_END;    jmp load_instr
+
+instr_printc: push "printc"; call print_instr; push INSTR_PRINTC; jmp load_instr
+instr_printi: push "printi"; call print_instr; push INSTR_PRINTI; jmp load_instr
+instr_readc:  push "readc";  call print_instr; push INSTR_READC;  jmp load_instr
+instr_readi:  push "readi";  call print_instr; push INSTR_READI;  jmp load_instr
 
 @include "../util/print-string.wsa"
 
