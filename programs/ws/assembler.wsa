@@ -1,4 +1,8 @@
-    #include "parse.wsa"
+@include "parse.wsa"
+
+parse_end:
+    drop
+    end
 
 instr_push:
     push "push"
@@ -84,14 +88,7 @@ instr_readi:
     push "readi"
     jmp print_instr
 
-print_string:
-    dup
-    jz .print_string_end
-    printc
-    jmp print_string
-.print_string_end:
-    drop
-    ret
+@include "../util/print-string.wsa"
 
 print_instr:
     call .print_instr
