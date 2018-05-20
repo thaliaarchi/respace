@@ -1,0 +1,8 @@
+print_string:
+    dup
+    jz .print_string_end
+    printc
+    jmp print_string
+.print_string_end:
+    drop
+    ret
