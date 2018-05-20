@@ -66,4 +66,5 @@
     store
 
 @include "parse.wsa"
+@include "load-program.wsa"
 @include "interpret.wsa"
