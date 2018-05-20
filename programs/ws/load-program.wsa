@@ -83,33 +83,7 @@ instr_readi:  push "readi";  call print_instr; push INSTR_READI;  jmp load_instr
 @include "../util/print-string.wsa"
 
 print_instr:
-    call .print_instr
-    push '\n'
-    printc
-    ret
-
-.print_instr:
-    push ' '
-    dup; dup; dup
     call print_string
-    ret
-
-print_instr_integer:
-    call .print_instr
-    push ' '
-    printc
-    call read_integer
-    printi
-    push '\n'
-    printc
-    ret
-
-print_instr_unsigned:
-    call .print_instr
-    push ' '
-    printc
-    call read_unsigned
-    printi
-    push '\n'
+    push ','
     printc
     ret
