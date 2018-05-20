@@ -1,9 +1,12 @@
-# First argument is output file
-# Second argument is C header file
-# Remaining arguments are wsa files to join
-SCRIPTDIR=$(dirname "$0")
-cat ${@:3} > tmp.c
-sed -E -i 's/\s*#.+$//g' tmp.c
-sed -E -i 's/\s*;\s*/\n/g' tmp.c
-gcc -E -P -include $2 tmp.c > $1
-rm tmp.c
+# ./preprocess.sh <input> <output>
+for i in {$1,*.wsa}; do
+    cp "$i" "$i.tmp.c"
+    sed -E -i '
+        s/\s*#.+$//g
+        s/\s*;\s*/\n/g
+        s/^\s*@/#/g
+        s/^#include\s*"(.+?)"/#include "\1.tmp.c"/g
+    ' "$i.tmp.c"
+done
+gcc -E -P $1.tmp.c > $2
+rm *.tmp.c
