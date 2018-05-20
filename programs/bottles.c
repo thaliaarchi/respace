@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-void main() {
+int main(int argc, char* argv[]) {
     int* heap = (int*)malloc(sizeof(int) * 10);
     heap[0] = ' ';
     heap[1] = 'b';
@@ -34,5 +34,5 @@ void main() {
     goto label_0;
 
     label_3:
-    return;
+    return 0;
 }
