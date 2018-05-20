@@ -17,10 +17,10 @@ namespace WS {
 
         void instrPush(integer_t value);
         void instrDup();
-        void instrCopy();
+        void instrCopy(integer_t n);
         void instrSwap();
         void instrDrop();
-        void instrSlide();
+        void instrSlide(integer_t count);
 
         void instrAdd();
         void instrSub();
@@ -32,10 +32,10 @@ namespace WS {
         void instrRetrieve();
 
         void instrLabel();
-        void instrCall(integer_t value);
-        void instrJmp(integer_t value);
-        void instrJz(integer_t value);
-        void instrJn(integer_t value);
+        void instrCall(integer_t label);
+        void instrJmp(integer_t label);
+        void instrJz(integer_t label);
+        void instrJn(integer_t label);
         void instrRet();
         void instrEnd();
 

@@ -3,6 +3,7 @@
 
 namespace WS {
     typedef long long integer_t;
+    typedef unsigned long long unsigned_t;
 
     enum InstructionType {
         // Stack Manipulation [Space]

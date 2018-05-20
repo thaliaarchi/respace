@@ -176,6 +176,18 @@ int main(int argc, char* argv[]) {
             printf("ERROR: %s", e);
         }
     }
+    /*VM vm({
+        Instruction(PUSH, 1),
+        Instruction(PUSH, 2),
+        Instruction(PUSH, 3),
+        Instruction(PUSH, 4),
+        Instruction(PUSH, 5),
+        Instruction(PUSH, 6),
+        Instruction(COPY, 3), // Should push 3
+        Instruction(SLIDE, 2), // Stack should contain [ 1, 2, 3, 4, 3 ]
+        DEBUG_PRINTSTACK
+    });
+    vm.execute();*/
     /*toBinary("programs/ws-assemble.generated.ws", "programs/ws-assemble.out.wsx");
     assemble("programs/hello-world.ws", "programs/hello-world.out.wsa");
     toBinary("programs/hello-world.ws", "programs/hello-world.out.wsx");

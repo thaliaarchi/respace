@@ -4,34 +4,36 @@
 #include <map>
 #include "vm.h"
 
+//#define DEBUG
+
 namespace WS {
     void VM::execute() {
         while (pc_ < instructions_.size()) {
             Instruction instr = instructions_[pc_];
             switch (instr.type) {
-            case PUSH:  instrPush(instr.value); break;
-            case DUP:   instrDup(); break;
-            case COPY:  instrCopy(); break;
-            case SWAP:  instrSwap(); break;
-            case DROP:  instrDrop(); break;
-            case SLIDE: instrSlide(); break;
+            case PUSH:   instrPush(instr.value); break;
+            case DUP:    instrDup(); break;
+            case COPY:   instrCopy(instr.value); break;
+            case SWAP:   instrSwap(); break;
+            case DROP:   instrDrop(); break;
+            case SLIDE:  instrSlide(instr.value); break;
 
-            case ADD: instrAdd(); break;
-            case SUB: instrSub(); break;
-            case MUL: instrMul(); break;
-            case DIV: instrDiv(); break;
-            case MOD: instrMod(); break;
+            case ADD:    instrAdd(); break;
+            case SUB:    instrSub(); break;
+            case MUL:    instrMul(); break;
+            case DIV:    instrDiv(); break;
+            case MOD:    instrMod(); break;
 
-            case STORE:    instrStore(); break;
+            case STORE:  instrStore(); break;
             case RETRIEVE: instrRetrieve(); break;
 
-            case LABEL: instrLabel(); break;
-            case CALL:  instrCall(instr.value); break;
-            case JMP:   instrJmp(instr.value); break;
-            case JZ:    instrJz(instr.value); break;
-            case JN:    instrJn(instr.value); break;
-            case RET:   instrRet(); break;
-            case END:   instrEnd(); break;
+            case LABEL:  instrLabel(); break;
+            case CALL:   instrCall(instr.value); break;
+            case JMP:    instrJmp(instr.value); break;
+            case JZ:     instrJz(instr.value); break;
+            case JN:     instrJn(instr.value); break;
+            case RET:    instrRet(); break;
+            case END:    instrEnd(); break;
 
             case PRINTC: instrPrintC(); break;
             case PRINTI: instrPrintI(); break;
@@ -57,7 +59,12 @@ namespace WS {
         pc_++;
     }
     // Copy the nth item on the stack (given by the argument) onto the top of the stack
-    void VM::instrCopy() {
+    void VM::instrCopy(integer_t n) {
+        size_t index = stack_.size() - n - 1;
+        if (index < 0 || index >= stack_.size()) {
+            throw "Runtime Error: Index out of bounds\n";
+        }
+        push(stack_.at(index));
         pc_++;
     }
     // Swap the top two items on the stack
@@ -74,7 +81,14 @@ namespace WS {
         pc_++;
     }
     // Slide n items off the stack, keeping the top item
-    void VM::instrSlide() {
+    void VM::instrSlide(integer_t count) {
+        if (count < 0) {
+            throw "Runtime Error: Count cannot be negative\n";
+        }
+        if (stack_.size() < (unsigned_t) 1 + count) {
+            throw "Runtime Error: Stack underflow\n";
+        }
+        stack_.erase(stack_.end() - 1 - count, stack_.end() - 1);
         pc_++;
     }
 
@@ -112,6 +126,12 @@ namespace WS {
 
     // Store
     void VM::instrStore() {
+#ifdef DEBUG
+        size_t pc_tmp = pc_;
+        instrDebugPrintHeap();
+        instrDebugPrintStack();
+        pc_ = pc_tmp;
+#endif
         integer_t value = pop();
         integer_t address = pop();
         heap_[address] = value;
@@ -197,6 +217,7 @@ namespace WS {
             printf(" %llu", stack_.at(i));
         }
         puts(" ]");
+        pc_++;
     }
     // Print contents of heap
     void VM::instrDebugPrintHeap() {
@@ -210,6 +231,7 @@ namespace WS {
             printf(", %lld: %lld", iter->first, iter->second);
         }
         puts(" }");
+        pc_++;
     }
 
     // Private
