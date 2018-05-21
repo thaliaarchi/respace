@@ -65,6 +65,8 @@
     push LABELS_START
     store
 
+@define debug_print(str) push str; call print_string
+
 @include "parse.wsa"
 @include "load-program.wsa"
 @include "interpret.wsa"

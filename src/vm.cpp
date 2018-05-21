@@ -4,7 +4,8 @@
 #include <map>
 #include "vm.h"
 
-//#define DEBUG
+//#define DEBUG_STORE
+#define DEBUG_END
 
 namespace WS {
     void VM::execute() {
@@ -126,7 +127,7 @@ namespace WS {
 
     // Store
     void VM::instrStore() {
-#ifdef DEBUG
+#ifdef DEBUG_STORE
         size_t pc_tmp = pc_;
         instrDebugPrintHeap();
         instrDebugPrintStack();
@@ -182,12 +183,17 @@ namespace WS {
     }
     // End the program
     void VM::instrEnd() {
+#ifdef DEBUG_END
+        putchar('\n');
+        instrDebugPrintHeap();
+        instrDebugPrintStack();
+#endif
         pc_ = instructions_.size();
     }
 
     // Output the character at the top of the stack
     void VM::instrPrintC() {
-        putchar((char) pop()); // Integers larger than 7 bits will not display correctly
+        putchar(pop()); // TODO: Integers larger than 7 bits will not display correctly
         pc_++;
     }
     // Output the number at the top of the stack
