@@ -1,6 +1,6 @@
 # TODO: Should really be incrementing stack top
 inc_instr_ptr:
-    push INSTR_PTR
+    push INSTR_STACK_PTR
     dup
     retrieve
     push 2
@@ -9,14 +9,14 @@ inc_instr_ptr:
     ret
 
 load_instr:
-    push INSTR_PTR
+    push INSTR_STACK_PTR
     retrieve
     swap
     store
     jmp inc_instr_ptr
 
 load_instr_integer:
-    push INSTR_PTR
+    push INSTR_STACK_PTR
     retrieve
     dup
     # Get the given instruction ID
@@ -34,7 +34,7 @@ load_instr_integer:
     jmp inc_instr_ptr
 
 load_instr_unsigned:
-    push INSTR_PTR
+    push INSTR_STACK_PTR
     retrieve
     dup
     # Get the given instruction ID

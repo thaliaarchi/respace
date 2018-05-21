@@ -5,12 +5,13 @@
 @define CALL_STACK_START 2400
 @define LABELS_START 2600
 
-# Variables
-@define INSTR_PTR 1
-@define STACK_TOP 2
-@define HEAP_TOP 3
-@define CALL_STACK_TOP 4
-@define LABELS_TOP 5
+# Addresses of variables
+@define INSTR_STACK_PTR 1
+@define INSTR_STACK_END 2
+@define STACK_TOP 3
+@define HEAP_TOP 4
+@define CALL_STACK_TOP 5
+@define LABELS_TOP 6
 
 # Instruction enum
 
@@ -45,7 +46,11 @@
 
     # Init variables
 
-    push INSTR_PTR
+    push INSTR_STACK_PTR
+    push INSTR_STACK_START
+    store
+
+    push INSTR_STACK_END
     push INSTR_STACK_START
     store
 
@@ -65,7 +70,11 @@
     push LABELS_START
     store
 
-@define debug_print(str) push str; call print_string
+@ifdef DEBUG
+    @define debug_print(str) push str; call print_string
+@else
+    @define debug_print(str)
+@endif
 
 @include "parse.wsa"
 @include "load-program.wsa"

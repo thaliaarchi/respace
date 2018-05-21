@@ -1,13 +1,13 @@
 parse_end:
     # Reset stack pointer
-    push INSTR_PTR
+    push INSTR_STACK_PTR
     push INSTR_STACK_START
     store
 
     debug_print("\nInterpret:\n")
 
 interpret_loop:
-    push INSTR_PTR
+    push INSTR_STACK_PTR
     dup
     retrieve
     dup
@@ -57,10 +57,26 @@ interpret_loop:
 interpret_push:
     debug_print("push,")
     drop
+
+    # Get stack top pointer
     push STACK_TOP
+    dup
     retrieve
-    call get_instr_integer
+    dup
+
+    # Get integer for push
+    copy 3
+    push 1
+    add
+    retrieve
+
     store
+
+    # Increment stack top pointer
+    push 1
+    add
+    store
+
     jmp .interpret_loop_footer
 
 interpret_dup:
@@ -162,15 +178,26 @@ interpret_end:
 interpret_printc:
     debug_print("printc,")
     drop
-    call get_instr_integer
+
+    # Get stack top pointer
+    push STACK_TOP
+    dup
+    retrieve
+    dup
+
+    retrieve
     printc
+
+    # Decrement stack top pointer
+    push 1
+    sub
+    store
+
     jmp .interpret_loop_footer
 
 interpret_printi:
     debug_print("printi,")
     drop
-    call get_instr_integer
-    printi
     jmp .interpret_loop_footer
 
 interpret_readc:
@@ -182,11 +209,3 @@ interpret_readi:
     debug_print("readi,")
     drop
     jmp .interpret_loop_footer
-
-# Retrieve integer to push
-get_instr_integer:
-    dup
-    push 1
-    add
-    retrieve
-    ret
