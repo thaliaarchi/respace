@@ -82,6 +82,26 @@ interpret_push:
 interpret_dup:
     debug_print("dup,")
     drop
+
+    # Get stack top pointer
+    push STACK_TOP
+    dup
+    retrieve
+    dup
+
+    call check_stack_underflow
+    dup
+    push 1
+    sub
+    retrieve
+
+    store
+
+    # Increment stack top pointer
+    push 1
+    add
+    store
+
     jmp .interpret_loop_footer
 
 interpret_copy:
@@ -185,6 +205,8 @@ interpret_printc:
     retrieve
     dup
 
+    push 1
+    sub
     retrieve
     printc
 
@@ -198,6 +220,23 @@ interpret_printc:
 interpret_printi:
     debug_print("printi,")
     drop
+
+    # Get stack top pointer
+    push STACK_TOP
+    dup
+    retrieve
+    dup
+
+    push 1
+    sub
+    retrieve
+    printi
+
+    # Decrement stack top pointer
+    push 1
+    sub
+    store
+
     jmp .interpret_loop_footer
 
 interpret_readc:
@@ -209,3 +248,8 @@ interpret_readi:
     debug_print("readi,")
     drop
     jmp .interpret_loop_footer
+
+# TODO: Check for stack underflow
+check_stack_underflow:
+    # If underflow: jmp .interpret_loop_footer
+    ret
