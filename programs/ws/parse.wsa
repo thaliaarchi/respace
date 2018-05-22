@@ -161,7 +161,7 @@ read_char:
     ret
 .read_char_end:
     drop
-    call parse_end
+    call parse_complete
 
 read_integer:
     call read_char

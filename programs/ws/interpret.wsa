@@ -1,4 +1,4 @@
-parse_end:
+parse_complete:
     # Reset stack pointer
     push INSTR_STACK_PTR
     push INSTR_STACK_START
