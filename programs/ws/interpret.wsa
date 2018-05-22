@@ -54,6 +54,46 @@ interpret_loop:
 
     jmp interpret_loop
 
+# Get stack top pointer
+get_stack_ptr:
+    push STACK_TOP
+    dup
+    retrieve
+    dup
+    ret
+
+# Get top two items on stack
+get_stack_two:
+    dup; push 1; sub
+    dup; push 1; sub
+    retrieve
+    swap
+    retrieve
+    ret
+
+# Increment stack top pointer
+increment_stack:
+    push 1
+    add
+    store
+
+    jmp .interpret_loop_footer
+
+# Decrement stack top pointer
+decrement_stack:
+    # Should have been checked earlier
+    # call check_stack_underflow
+    push 1
+    sub
+    store
+
+    jmp .interpret_loop_footer
+
+# TODO: Check for stack underflow
+check_stack_underflow:
+    # If underflow: jmp .interpret_loop_footer
+    ret
+
 interpret_push:
     debug_print("push,")
     drop
@@ -72,16 +112,13 @@ interpret_push:
 
     store
 
-    # Increment stack top pointer
-    push 1
-    add
-    store
-
-    jmp .interpret_loop_footer
+    jmp increment_stack
 
 interpret_dup:
     debug_print("dup,")
     drop
+
+    call check_stack_underflow
 
     # Get stack top pointer
     push STACK_TOP
@@ -89,20 +126,12 @@ interpret_dup:
     retrieve
     dup
 
-    call check_stack_underflow
-    dup
-    push 1
-    sub
+    dup; push 1; sub
     retrieve
 
     store
 
-    # Increment stack top pointer
-    push 1
-    add
-    store
-
-    jmp .interpret_loop_footer
+    jmp increment_stack
 
 interpret_copy:
     debug_print("copy,")
@@ -117,7 +146,15 @@ interpret_swap:
 interpret_drop:
     debug_print("drop,")
     drop
-    jmp .interpret_loop_footer
+
+    call check_stack_underflow
+
+    # Get stack top pointer
+    push STACK_TOP
+    dup
+    retrieve
+
+    jmp decrement_stack
 
 interpret_slide:
     debug_print("slide,")
@@ -127,27 +164,57 @@ interpret_slide:
 interpret_add:
     debug_print("add,")
     drop
-    jmp .interpret_loop_footer
+
+    call get_stack_ptr
+    call check_stack_underflow # TODO: check for 2 items
+    call get_stack_two
+    add
+    store
+    jmp decrement_stack
 
 interpret_sub:
     debug_print("sub,")
     drop
-    jmp .interpret_loop_footer
+
+    call get_stack_ptr
+    call check_stack_underflow # TODO: check for 2 items
+    call get_stack_two
+    sub
+    store
+    jmp decrement_stack
 
 interpret_mul:
     debug_print("mul,")
     drop
-    jmp .interpret_loop_footer
+
+    call get_stack_ptr
+    call check_stack_underflow # TODO: check for 2 items
+    call get_stack_two
+    mul
+    store
+    jmp decrement_stack
 
 interpret_div:
     debug_print("div,")
     drop
-    jmp .interpret_loop_footer
+
+    call get_stack_ptr
+    call check_stack_underflow # TODO: check for 2 items
+    call get_stack_two
+    div
+    store
+    jmp decrement_stack
 
 interpret_mod:
     debug_print("mod,")
     drop
-    jmp .interpret_loop_footer
+
+    call get_stack_ptr
+    call check_stack_underflow # TODO: check for 2 items
+    call get_stack_two
+    mod
+    store
+    jmp decrement_stack
 
 interpret_store:
     debug_print("store,")
@@ -199,6 +266,8 @@ interpret_printc:
     debug_print("printc,")
     drop
 
+    call check_stack_underflow
+
     # Get stack top pointer
     push STACK_TOP
     dup
@@ -210,16 +279,13 @@ interpret_printc:
     retrieve
     printc
 
-    # Decrement stack top pointer
-    push 1
-    sub
-    store
-
-    jmp .interpret_loop_footer
+    jmp decrement_stack
 
 interpret_printi:
     debug_print("printi,")
     drop
+
+    call check_stack_underflow
 
     # Get stack top pointer
     push STACK_TOP
@@ -232,12 +298,7 @@ interpret_printi:
     retrieve
     printi
 
-    # Decrement stack top pointer
-    push 1
-    sub
-    store
-
-    jmp .interpret_loop_footer
+    jmp decrement_stack
 
 interpret_readc:
     debug_print("readc,")
@@ -248,8 +309,3 @@ interpret_readi:
     debug_print("readi,")
     drop
     jmp .interpret_loop_footer
-
-# TODO: Check for stack underflow
-check_stack_underflow:
-    # If underflow: jmp .interpret_loop_footer
-    ret
