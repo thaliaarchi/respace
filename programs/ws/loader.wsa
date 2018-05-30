@@ -1,6 +1,6 @@
 # TODO: Should really be incrementing stack top
-inc_instr_ptr:
-    push INSTR_STACK_PTR
+inc_instr_stack_end:
+    push INSTR_STACK_END
     dup
     retrieve
     push 2
@@ -9,14 +9,14 @@ inc_instr_ptr:
     ret
 
 load_instr:
-    push INSTR_STACK_PTR
+    push INSTR_STACK_END
     retrieve
     swap
     store
-    jmp inc_instr_ptr
+    jmp inc_instr_stack_end
 
 load_instr_integer:
-    push INSTR_STACK_PTR
+    push INSTR_STACK_END
     retrieve
     dup
     # Get the given instruction ID
@@ -31,10 +31,10 @@ load_instr_integer:
     store
     # Push garbage because the read character will be discarded
     # push 99 # The argument works for this filler item now
-    jmp inc_instr_ptr
+    jmp inc_instr_stack_end
 
 load_instr_unsigned:
-    push INSTR_STACK_PTR
+    push INSTR_STACK_END
     retrieve
     dup
     # Get the given instruction ID
@@ -49,7 +49,7 @@ load_instr_unsigned:
     store
     # Push garbage because the read character will be discarded
     # push 99 # The argument works for this filler item now
-    jmp inc_instr_ptr
+    jmp inc_instr_stack_end
 
 instr_push:   debug_print("push,");   push INSTR_PUSH;   jmp load_instr_integer
 instr_dup:    debug_print("dup,");    push INSTR_DUP;    jmp load_instr

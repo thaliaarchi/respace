@@ -77,5 +77,5 @@
 @endif
 
 @include "parse.wsa"
-@include "load-program.wsa"
+@include "loader.wsa"
 @include "interpret.wsa"
