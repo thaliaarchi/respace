@@ -33,14 +33,15 @@ instr_label:
     call param_store_instr
     call read_unsigned
     push LABELS_END
+    retrieve
+    push 2
+    sub
     dup
     copy 2
     store
     push 1
     add
     push INSTR_STACK_END
-    push 2
-    sub
     retrieve
     store
     slide 1
