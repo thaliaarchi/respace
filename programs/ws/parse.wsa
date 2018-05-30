@@ -1,8 +1,8 @@
 # Press ^D to exit input
 
-.parse_loop:
+.parser_loop:
     call parse
-    jmp .parse_loop
+    jmp .parser_loop
 
 parse:
     call read_char
@@ -161,7 +161,7 @@ read_char:
     ret
 .read_char_end:
     drop
-    call parse_complete
+    call parser_complete
 
 read_integer:
     call read_char

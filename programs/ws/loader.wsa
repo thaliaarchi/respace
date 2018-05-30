@@ -1,56 +1,3 @@
-# TODO: Should really be incrementing stack top
-inc_instr_stack_end:
-    push INSTR_STACK_END
-    dup
-    retrieve
-    push 2
-    add
-    store
-    ret
-
-load_instr:
-    push INSTR_STACK_END
-    retrieve
-    swap
-    store
-    jmp inc_instr_stack_end
-
-load_instr_integer:
-    push INSTR_STACK_END
-    retrieve
-    dup
-    # Get the given instruction ID
-    copy 2
-    store
-    push 1
-    add
-    swap
-    call read_integer
-    swap
-    drop
-    store
-    # Push garbage because the read character will be discarded
-    # push 99 # The argument works for this filler item now
-    jmp inc_instr_stack_end
-
-load_instr_unsigned:
-    push INSTR_STACK_END
-    retrieve
-    dup
-    # Get the given instruction ID
-    copy 2
-    store
-    push 1
-    add
-    swap
-    call read_unsigned
-    swap
-    drop
-    store
-    # Push garbage because the read character will be discarded
-    # push 99 # The argument works for this filler item now
-    jmp inc_instr_stack_end
-
 instr_push:   debug_print("push,");   push INSTR_PUSH;   jmp load_instr_integer
 instr_dup:    debug_print("dup,");    push INSTR_DUP;    jmp load_instr
 instr_copy:   debug_print("copy,");   push INSTR_COPY;   jmp load_instr_integer
@@ -79,5 +26,55 @@ instr_printc: debug_print("printc,"); push INSTR_PRINTC; jmp load_instr
 instr_printi: debug_print("printi,"); push INSTR_PRINTI; jmp load_instr
 instr_readc:  debug_print("readc,");  push INSTR_READC;  jmp load_instr
 instr_readi:  debug_print("readi,");  push INSTR_READI;  jmp load_instr
+
+load_instr:
+    push INSTR_STACK_END
+    retrieve
+    swap
+    store
+    jmp increment_instr_stack
+
+load_instr_integer:
+    push INSTR_STACK_END
+    retrieve
+    dup
+    copy 2  # Get the given instruction ID
+    store
+    push 1
+    add
+    swap
+    call read_integer
+    swap
+    drop
+    store
+    # Push garbage because the read character will be discarded
+    # push 99  # The argument works for this filler item now
+    jmp increment_instr_stack
+
+load_instr_unsigned:
+    push INSTR_STACK_END
+    retrieve
+    dup
+    copy 2  # Get the given instruction ID
+    store
+    push 1
+    add
+    swap
+    call read_unsigned
+    swap
+    drop
+    store
+    # Push garbage because the read character will be discarded
+    # push 99  # The argument works for this filler item now
+    jmp increment_instr_stack
+
+increment_instr_stack:
+    push INSTR_STACK_END
+    dup
+    retrieve
+    push 2
+    add
+    store
+    ret
 
 @include "../util/print-string.wsa"

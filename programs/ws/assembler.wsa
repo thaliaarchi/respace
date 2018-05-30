@@ -1,6 +1,6 @@
 @include "parse.wsa"
 
-parse_complete:
+parser_complete:
     drop
     end
 

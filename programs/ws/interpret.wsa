@@ -1,4 +1,4 @@
-parse_complete:
+parser_complete:
     debug_print("\nInterpret:\n")
 
 interpret_loop:
