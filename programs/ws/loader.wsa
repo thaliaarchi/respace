@@ -14,7 +14,7 @@ instr_mod:    debug_print("mod,");    push INSTR_MOD;    jmp load_instr
 instr_store:  debug_print("store,");  push INSTR_STORE;  jmp load_instr
 instr_retrieve: debug_print("retrieve,"); push INSTR_RETRIEVE; jmp load_instr
 
-instr_label:  debug_print("label,");  push INSTR_LABEL;  jmp load_instr_unsigned
+#instr_label: debug_print("label,");  push INSTR_LABEL;  jmp load_instr_unsigned  # See below
 instr_call:   debug_print("call,");   push INSTR_CALL;   jmp load_instr_unsigned
 instr_jmp:    debug_print("jmp,");    push INSTR_JMP;    jmp load_instr_unsigned
 instr_jz:     debug_print("jz,");     push INSTR_JZ;     jmp load_instr_unsigned
@@ -27,6 +27,26 @@ instr_printi: debug_print("printi,"); push INSTR_PRINTI; jmp load_instr
 instr_readc:  debug_print("readc,");  push INSTR_READC;  jmp load_instr
 instr_readi:  debug_print("readi,");  push INSTR_READI;  jmp load_instr
 
+instr_label:
+    debug_print("label,")
+    push INSTR_LABEL
+    call param_store_instr
+    call read_unsigned
+    push LABELS_END
+    dup
+    copy 2
+    store
+    push 1
+    add
+    push INSTR_STACK_END
+    push 2
+    sub
+    retrieve
+    store
+    slide 1
+    store
+    jmp increment_instr_stack
+
 load_instr:
     push INSTR_STACK_END
     retrieve
@@ -35,23 +55,20 @@ load_instr:
     jmp increment_instr_stack
 
 load_instr_integer:
-    push INSTR_STACK_END
-    retrieve
-    dup
-    copy 2  # Get the given instruction ID
-    store
-    push 1
-    add
-    swap
+    call param_store_instr
     call read_integer
-    swap
-    drop
+    slide 1
     store
-    # Push garbage because the read character will be discarded
-    # push 99  # The argument works for this filler item now
     jmp increment_instr_stack
 
 load_instr_unsigned:
+    call param_store_instr
+    call read_unsigned
+    slide 1
+    store
+    jmp increment_instr_stack
+
+param_store_instr:
     push INSTR_STACK_END
     retrieve
     dup
@@ -60,13 +77,7 @@ load_instr_unsigned:
     push 1
     add
     swap
-    call read_unsigned
-    swap
-    drop
-    store
-    # Push garbage because the read character will be discarded
-    # push 99  # The argument works for this filler item now
-    jmp increment_instr_stack
+    ret
 
 increment_instr_stack:
     push INSTR_STACK_END
@@ -76,5 +87,3 @@ increment_instr_stack:
     add
     store
     ret
-
-@include "../util/print-string.wsa"
