@@ -61,11 +61,13 @@ namespace WS {
     }
     // Copy the nth item on the stack (given by the argument) onto the top of the stack
     void VM::instrCopy(integer_t n) {
-        size_t index = stack_.size() - n - 1;
-        if (index < 0 || index >= stack_.size()) {
-            throw "Runtime Error: Index out of bounds\n";
+        if (n < 0) {
+            throw "Runtime Error: Index cannot be negative\n"; // Undefined behavior
         }
-        push(stack_.at(index));
+        if ((unsigned_t) n >= stack_.size()) {
+            throw "Runtime Error: Stack underflow\n";
+        }
+        push(stack_.at(stack_.size() - n - 1));
         pc_++;
     }
     // Swap the top two items on the stack
@@ -84,12 +86,12 @@ namespace WS {
     // Slide n items off the stack, keeping the top item
     void VM::instrSlide(integer_t count) {
         if (count < 0) {
-            throw "Runtime Error: Count cannot be negative\n";
+            throw "Runtime Error: Count cannot be negative\n"; // Undefined behavior
         }
-        if (stack_.size() < (unsigned_t) 1 + count) {
+        if ((unsigned_t) count >= stack_.size()) {
             throw "Runtime Error: Stack underflow\n";
         }
-        stack_.erase(stack_.end() - 1 - count, stack_.end() - 1);
+        stack_.erase(stack_.end() - count - 1, stack_.end() - 1);
         pc_++;
     }
 
