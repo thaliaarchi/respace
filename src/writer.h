@@ -4,18 +4,20 @@
 #include "bufferio.h"
 
 namespace WS {
-    class Writer : public BufferIO {
-    public:
-        Writer(FILE* stream, size_t buffer_capacity);
-        ~Writer();
 
-        void write(block_t block);
-        void writeBit(block_t bit);
-        void flush();
+class Writer : public BufferIO {
+public:
+    Writer(FILE* stream, size_t buffer_capacity);
+    ~Writer();
 
-    private:
-        void writeBuffer(size_t size);
-    };
-}
+    void write(block_t block);
+    void writeBit(block_t bit);
+    void flush();
+
+private:
+    void writeBuffer(size_t size);
+};
+
+} // namespace WS
 
 #endif

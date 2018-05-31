@@ -7,60 +7,62 @@
 #include "instruction.h"
 
 namespace WS {
-    class VM {
-    public:
-        VM(std::vector<Instruction> instructions) : instructions_(instructions), pc_(0) {
-            initLabels();
-        }
 
-        void execute();
+class VM {
+public:
+    VM(std::vector<Instruction> instructions) : instructions_(instructions), pc_(0) {
+        initLabels();
+    }
 
-        void instrPush(integer_t value);
-        void instrDup();
-        void instrCopy(integer_t n);
-        void instrSwap();
-        void instrDrop();
-        void instrSlide(integer_t count);
+    void execute();
 
-        void instrAdd();
-        void instrSub();
-        void instrMul();
-        void instrDiv();
-        void instrMod();
+    void instrPush(integer_t value);
+    void instrDup();
+    void instrCopy(integer_t n);
+    void instrSwap();
+    void instrDrop();
+    void instrSlide(integer_t count);
 
-        void instrStore();
-        void instrRetrieve();
+    void instrAdd();
+    void instrSub();
+    void instrMul();
+    void instrDiv();
+    void instrMod();
 
-        void instrLabel();
-        void instrCall(integer_t label);
-        void instrJmp(integer_t label);
-        void instrJz(integer_t label);
-        void instrJn(integer_t label);
-        void instrRet();
-        void instrEnd();
+    void instrStore();
+    void instrRetrieve();
 
-        void instrPrintC();
-        void instrPrintI();
-        void instrReadC();
-        void instrReadI();
+    void instrLabel();
+    void instrCall(integer_t label);
+    void instrJmp(integer_t label);
+    void instrJz(integer_t label);
+    void instrJn(integer_t label);
+    void instrRet();
+    void instrEnd();
 
-        void instrDebugPrintStack();
-        void instrDebugPrintHeap();
+    void instrPrintC();
+    void instrPrintI();
+    void instrReadC();
+    void instrReadI();
 
-    private:
-        std::vector<Instruction> instructions_;
-        std::vector<integer_t> stack_;
-        std::map<integer_t, integer_t> heap_;
-        std::map<integer_t, size_t> labels_;
-        std::stack<size_t> call_stack_;
-        size_t pc_;
+    void instrDebugPrintStack();
+    void instrDebugPrintHeap();
 
-        void initLabels();
-        void push(integer_t value);
-        void drop();
-        integer_t pop();
-        integer_t top();
-    };
-}
+private:
+    std::vector<Instruction> instructions_;
+    std::vector<integer_t> stack_;
+    std::map<integer_t, integer_t> heap_;
+    std::map<integer_t, size_t> labels_;
+    std::stack<size_t> call_stack_;
+    size_t pc_;
+
+    void initLabels();
+    void push(integer_t value);
+    void drop();
+    integer_t pop();
+    integer_t top();
+};
+
+} // namespace WS
 
 #endif

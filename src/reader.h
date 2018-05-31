@@ -4,17 +4,19 @@
 #include "bufferio.h"
 
 namespace WS {
-    class Reader : public BufferIO {
-    public:
-        Reader(FILE* stream, size_t buffer_capacity);
 
-        block_t next();
-        block_t nextBit();
-        bool hasNext();
+class Reader : public BufferIO {
+public:
+    Reader(FILE* stream, size_t buffer_capacity);
 
-    private:
-        void readBuffer();
-    };
-}
+    block_t next();
+    block_t nextBit();
+    bool hasNext();
+
+private:
+    void readBuffer();
+};
+
+} // namespace WS
 
 #endif
