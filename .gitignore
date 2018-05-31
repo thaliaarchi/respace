@@ -11,3 +11,4 @@ Debug
 *.out.*
 .depend
 respace
+run_tests

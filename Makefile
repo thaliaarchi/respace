@@ -9,19 +9,25 @@ LDLIBS=#$(shell root-config --libs)
 SRCS=src/main.cpp src/parser.cpp src/reader.cpp src/vm.cpp src/writer.cpp
 OBJS=$(subst .cpp,.o,$(SRCS))
 
+TESTSRCS=test/test.cpp
+TESTOBJS=$(subst .cpp,.o,$(TESTSRCS))
+
 all: respace
 
 respace: $(OBJS)
 	$(CXX) $(LDFLAGS) -o respace $(OBJS) $(LDLIBS)
 
+test: $(TESTOBJS)
+	$(CXX) $(LDFLAGS) -o run_tests $(TESTOBJS) $(LDLIBS)
+
 depend: .depend
 
-.depend: $(SRCS)
+.depend: $(SRCS) $(TESTSRCS)
 	$(RM) ./.depend
 	$(CXX) $(CPPFLAGS) -MM $^>>./.depend;
 
 clean:
-	$(RM) $(OBJS)
+	$(RM) $(OBJS) $(TESTOBJS)
 
 distclean: clean
 	$(RM) *~ .depend
