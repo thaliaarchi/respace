@@ -10,7 +10,7 @@ SRCS=src/main.cpp src/parser.cpp src/reader.cpp src/vm.cpp src/writer.cpp
 OBJS=$(subst .cpp,.o,$(SRCS))
 
 TESTSRCS=test/test.cpp
-TESTOBJS=$(subst .cpp,.o,$(TESTSRCS))
+TESTOBJS=$(subst .cpp,.o,$(TESTSRCS)) $(filter-out src/main.o, $(OBJS))
 
 all: respace
 
@@ -19,6 +19,7 @@ respace: $(OBJS)
 
 test: $(TESTOBJS)
 	$(CXX) $(LDFLAGS) -o run_tests $(TESTOBJS) $(LDLIBS)
+	./run_tests
 
 depend: .depend
 
