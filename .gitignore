@@ -6,6 +6,7 @@ Debug
 
 # Generated files
 *.o
+*.s
 *.out
 *.out.*
 .depend
