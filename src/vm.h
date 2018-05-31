@@ -48,7 +48,10 @@ public:
     void instrDebugPrintStack();
     void instrDebugPrintHeap();
 
-private:
+    std::vector<integer_t> getStack() const;
+    std::map<integer_t, integer_t> getHeap() const;
+
+  private:
     std::vector<Instruction> instructions_;
     std::vector<integer_t> stack_;
     std::map<integer_t, integer_t> heap_;

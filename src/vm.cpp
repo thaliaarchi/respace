@@ -243,6 +243,14 @@ void VM::instrDebugPrintHeap() {
     pc_++;
 }
 
+std::vector<integer_t> VM::getStack() const {
+    return stack_;
+}
+
+std::map<integer_t, integer_t> VM::getHeap() const {
+    return heap_;
+}
+
 // Private
 
 void VM::initLabels() {

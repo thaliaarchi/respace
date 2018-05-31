@@ -1,18 +1,33 @@
 #define CATCH_CONFIG_MAIN
+
 #include "catch.hpp"
+#include <vector>
+#include "../src/instruction.h"
 #include "../src/vm.h"
 
-int Factorial(int number) {
-   return number <= 1 ? number : Factorial(number - 1) * number;
-}
+using namespace WS;
 
-TEST_CASE("Factorial of 0 is 1 (fail)", "[single-file]") {
-    REQUIRE(0 == 1);
-}
+TEST_CASE("VM executes simple stack instructions", "[vm]") {
+    const std::vector<integer_t> stack{1, 2, 3, 4, 5};
+    VM vm({
+        Instruction(PUSH, 1),
+        Instruction(PUSH, 2),
+        Instruction(PUSH, 3),
+        DUP,
+        Instruction(PUSH, 1),
+        ADD,
+        Instruction(COPY, 1),
+        Instruction(COPY, 3),
+        ADD
+    });
+    vm.execute();
 
-TEST_CASE("Factorials of 1 and higher are computed (pass)", "[single-file]") {
-    REQUIRE(1 == 1);
-    REQUIRE(2 == 2);
-    REQUIRE(3 == 6);
-    REQUIRE(1 == 3628800);
+    SECTION("Simple stack instructions ouput correctly") {
+        REQUIRE(vm.getStack() == stack);
+    }
+
+    SECTION("VM::getStack returns a copy of the stack") {
+        vm.getStack().push_back(42);
+        REQUIRE(vm.getStack() == stack);
+    }
 }
