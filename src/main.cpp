@@ -78,56 +78,6 @@ void interpret(const char* in) {
     fclose(in_file);
 }
 
-void bottles() {
-    VM program({
-        // Store " bottles\n" string in heap
-        Instruction(PUSH, 0), Instruction(PUSH, ' '), STORE,
-        Instruction(PUSH, 1), Instruction(PUSH, 'b'), STORE,
-        Instruction(PUSH, 2), Instruction(PUSH, 'o'), STORE,
-        Instruction(PUSH, 3), Instruction(PUSH, 't'), STORE,
-        Instruction(PUSH, 4), Instruction(PUSH, 't'), STORE,
-        Instruction(PUSH, 5), Instruction(PUSH, 'l'), STORE,
-        Instruction(PUSH, 6), Instruction(PUSH, 'e'), STORE,
-        Instruction(PUSH, 7), Instruction(PUSH, 's'), STORE,
-        Instruction(PUSH, 8), Instruction(PUSH, '\n'), STORE,
-        Instruction(PUSH, 9), Instruction(PUSH, 0), STORE,
-
-        // While count >= 0
-        Instruction(PUSH, 99),
-        Instruction(LABEL, 0),
-            // Print count
-            DUP, PRINTI,
-
-            // For each char of string until 0
-            Instruction(PUSH, 0),
-            Instruction(LABEL, 1),
-                DUP, RETRIEVE,
-                DUP, Instruction(JZ, 2),
-                PRINTC,
-                Instruction(PUSH, 1),
-                ADD,
-            Instruction(JMP, 1),
-
-            // Loop cleanup
-            Instruction(LABEL, 2),
-            DROP,
-            DROP,
-
-            // Decrement count
-            Instruction(PUSH, 1),
-            SUB,
-            DUP,
-        Instruction(JN, 3),
-        Instruction(JMP, 0),
-
-        // Cleanup
-        Instruction(LABEL, 3),
-        DROP,
-        END
-    });
-    program.execute();
-}
-
 void count(int min, int max) {
     // Count from 1 to 99
     VM program({
@@ -193,7 +143,6 @@ int main(int argc, char* argv[]) {
     toBinary("programs/hello-world.ws", "programs/hello-world.out.wsx");
     fromBinary("programs/hello-world.out.wsx", "programs/hello-world.out.ws");
     interpret("programs/hello-world.ws");*/
-    //bottles();
     //count(1, 10);
 #ifdef _WIN32
     system("pause");
