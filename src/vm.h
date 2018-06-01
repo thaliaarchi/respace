@@ -1,6 +1,7 @@
 #ifndef WS_INTERPRETER_H_
 #define WS_INTERPRETER_H_
 
+#include <iostream>
 #include <vector>
 #include <stack>
 #include <map>
@@ -10,9 +11,12 @@ namespace WS {
 
 class VM {
 public:
-    VM(std::vector<Instruction> instructions) : instructions_(instructions), pc_(0) {
+    VM(std::vector<Instruction> instructions, std::istream &in, std::ostream &out)
+        : instructions_(instructions), pc_(0), in_(in), out_(out) {
         initLabels();
     }
+
+    VM(std::vector<Instruction> instructions) : VM(instructions, std::cin, std::cout) {}
 
     void execute();
 
@@ -58,6 +62,8 @@ public:
     std::map<integer_t, size_t> labels_;
     std::stack<size_t> call_stack_;
     size_t pc_;
+    std::istream &in_;
+    std::ostream &out_;
 
     void initLabels();
     void push(integer_t value);

@@ -187,7 +187,7 @@ void VM::instrRet() {
 // End the program
 void VM::instrEnd() {
 #ifdef DEBUG_END
-    putchar('\n');
+    out_.put('\n');
     instrDebugPrintHeap();
     instrDebugPrintStack();
 #endif
@@ -196,50 +196,48 @@ void VM::instrEnd() {
 
 // Output the character at the top of the stack
 void VM::instrPrintC() {
-    putchar(pop()); // TODO: Integers larger than 7 bits will not display correctly
+    out_.put(pop()); // TODO: Integers larger than 7 bits will not display correctly
     pc_++;
 }
 // Output the number at the top of the stack
 void VM::instrPrintI() {
-    printf("%lld", pop());
+    out_ << pop();
     pc_++;
 }
 // Read a character and place it in the location given by the top of the stack
 void VM::instrReadC() {
-    char c;
-    scanf("%c", &c);
-    heap_[pop()] = (integer_t) c;
+    heap_[pop()] = (integer_t) in_.get();
     pc_++;
 }
 // 	Read a number and place it in the location given by the top of the stack
 void VM::instrReadI() {
     integer_t integer;
-    scanf("%lld", &integer);
+    in_ >> integer;
     heap_[pop()] = integer;
     pc_++;
 }
 
 // Print contents of stack
 void VM::instrDebugPrintStack() {
-    putchar('[');
+    out_.put('[');
     for (size_t i = 0; i < stack_.size(); i++) {
-        printf(" %llu", stack_.at(i));
+        out_ << ' ' << stack_.at(i);
     }
-    puts(" ]");
+    out_ << " ]\n";
     pc_++;
 }
 // Print contents of heap
 void VM::instrDebugPrintHeap() {
     std::map<integer_t, integer_t>::iterator iter = heap_.begin();
-    putchar('{');
+    out_.put('{');
     if (iter != heap_.end()) {
-        printf(" %lld: %lld", iter->first, iter->second);
+        out_ << ' ' << iter->first << ": " << iter->second;
         ++iter;
     }
     for (; iter != heap_.end(); ++iter) {
-        printf(", %lld: %lld", iter->first, iter->second);
+        out_ << ", " << iter->first << ": " << iter->second;
     }
-    puts(" }");
+    out_ << " }\n";
     pc_++;
 }
 
