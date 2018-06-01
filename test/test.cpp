@@ -4,6 +4,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <map>
 #include "../src/instruction.h"
 #include "../src/parser.h"
 #include "../src/vm.h"
@@ -20,6 +21,19 @@ std::vector<Instruction> parseProgram(const char *path) {
     }
     fclose(in_file);
     return instructions;
+}
+void compareProgramOutput(std::vector<Instruction> program_a, std::vector<Instruction> program_b, std::istream &in) {
+    std::ostringstream out_a, out_b;
+    VM(program_a, in, out_a).execute();
+    VM(program_b, in, out_b).execute();
+    REQUIRE(out_a.str() == out_b.str());
+}
+
+void testProgram(std::vector<Instruction> program, std::vector<integer_t> stack, std::map<integer_t, integer_t> heap) {
+    VM vm(program);
+    vm.execute();
+    REQUIRE(vm.getStack() == stack);
+    REQUIRE(vm.getHeap() == heap);
 }
 
 TEST_CASE("VM executes simple stack instructions", "[vm]") {
@@ -47,15 +61,22 @@ TEST_CASE("VM executes simple stack instructions", "[vm]") {
     }
 }
 
-TEST_CASE("Verify bottles program", "[bottles]") {
-    std::istringstream instr_in, ws_in;
-    std::ostringstream instr_out, ws_out;
-
-    VM({
+TEST_CASE("Bottles instructions execute identically to parsed WS program", "[bottles]") {
+    std::istringstream in;
+    compareProgramOutput({
 #include "../programs/bottles.instr"
-    }, instr_in, instr_out).execute();
+    }, parseProgram("programs/bottles.generated.ws"), in);
+}
 
-    VM(parseProgram("programs/bottles.generated.ws"), ws_in, ws_out).execute();
-
-    REQUIRE(instr_out.str() == ws_out.str());
+TEST_CASE("Copy and slide run as expected", "[instructions]") {
+    testProgram({
+        Instruction(PUSH, 1),
+        Instruction(PUSH, 2),
+        Instruction(PUSH, 3),
+        Instruction(PUSH, 4),
+        Instruction(PUSH, 5),
+        Instruction(PUSH, 6),
+        Instruction(COPY, 3), // Should push 3
+        Instruction(SLIDE, 2)
+    }, { 1, 2, 3, 4, 3 }, {});
 }
