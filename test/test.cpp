@@ -1,7 +1,6 @@
 #define CATCH_CONFIG_MAIN
 
 #include "catch.hpp"
-#include <iostream>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -11,16 +10,7 @@
 
 using namespace WS;
 
-std::string captureOutput(VM vm) {
-    std::ostringstream oss;
-    std::streambuf *cout_streambuf = std::cout.rdbuf();
-    std::cout.rdbuf(oss.rdbuf());
-    vm.execute();
-    std::cout.rdbuf(cout_streambuf); // Restore
-    return oss.str();
-}
-
-VM loadProgram(const char *path) {
+std::vector<Instruction> parseProgram(const char *path) {
     FILE* in_file = fopen(path, "r");
     Parser parser(in_file);
     std::vector<Instruction> instructions;
@@ -29,7 +19,7 @@ VM loadProgram(const char *path) {
         instructions.push_back(instr);
     }
     fclose(in_file);
-    return VM(instructions);
+    return instructions;
 }
 
 TEST_CASE("VM executes simple stack instructions", "[vm]") {
@@ -58,52 +48,14 @@ TEST_CASE("VM executes simple stack instructions", "[vm]") {
 }
 
 TEST_CASE("Verify bottles program", "[bottles]") {
-    VM program({
-        // Store " bottles\n" string in heap
-        Instruction(PUSH, 0), Instruction(PUSH, ' '), STORE,
-        Instruction(PUSH, 1), Instruction(PUSH, 'b'), STORE,
-        Instruction(PUSH, 2), Instruction(PUSH, 'o'), STORE,
-        Instruction(PUSH, 3), Instruction(PUSH, 't'), STORE,
-        Instruction(PUSH, 4), Instruction(PUSH, 't'), STORE,
-        Instruction(PUSH, 5), Instruction(PUSH, 'l'), STORE,
-        Instruction(PUSH, 6), Instruction(PUSH, 'e'), STORE,
-        Instruction(PUSH, 7), Instruction(PUSH, 's'), STORE,
-        Instruction(PUSH, 8), Instruction(PUSH, '\n'), STORE,
-        Instruction(PUSH, 9), Instruction(PUSH, 0), STORE,
+    std::istringstream instr_in, ws_in;
+    std::ostringstream instr_out, ws_out;
 
-        // While count >= 0
-        Instruction(PUSH, 99),
-        Instruction(LABEL, 0),
-            // Print count
-            DUP, PRINTI,
+    VM({
+#include "../programs/bottles.instr"
+    }, instr_in, instr_out).execute();
 
-            // For each char of string until 0
-            Instruction(PUSH, 0),
-            Instruction(LABEL, 1),
-                DUP, RETRIEVE,
-                DUP, Instruction(JZ, 2),
-                PRINTC,
-                Instruction(PUSH, 1),
-                ADD,
-            Instruction(JMP, 1),
+    VM(parseProgram("programs/bottles.generated.ws"), ws_in, ws_out).execute();
 
-            // Loop cleanup
-            Instruction(LABEL, 2),
-            DROP,
-            DROP,
-
-            // Decrement count
-            Instruction(PUSH, 1),
-            SUB,
-            DUP,
-        Instruction(JN, 3),
-        Instruction(JMP, 0),
-
-        // Cleanup
-        Instruction(LABEL, 3),
-        DROP,
-        END
-    });
-
-    REQUIRE(captureOutput(program) == captureOutput(loadProgram("programs/bottles.generated.ws")));
+    REQUIRE(instr_out.str() == ws_out.str());
 }
