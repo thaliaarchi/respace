@@ -22,11 +22,20 @@ std::vector<Instruction> parseProgram(const char *path) {
     fclose(in_file);
     return instructions;
 }
-void compareProgramOutput(std::vector<Instruction> program_a, std::vector<Instruction> program_b, std::istream &in) {
+
+void compareProgramOutput(std::vector<Instruction> program_a, std::vector<Instruction> program_b, std::string input) {
+    std::istringstream in(input);
     std::ostringstream out_a, out_b;
     VM(program_a, in, out_a).execute();
     VM(program_b, in, out_b).execute();
     REQUIRE(out_a.str() == out_b.str());
+}
+
+void testProgramOutput(std::vector<Instruction> program, std::string input, std::string output) {
+    std::istringstream in(input);
+    std::ostringstream out;
+    VM(program, in, out).execute();
+    REQUIRE(output == out.str());
 }
 
 void testProgram(std::vector<Instruction> program, std::vector<integer_t> stack, std::map<integer_t, integer_t> heap) {
@@ -38,6 +47,8 @@ void testProgram(std::vector<Instruction> program, std::vector<integer_t> stack,
 
 TEST_CASE("VM executes simple stack instructions", "[vm]") {
     const std::vector<integer_t> stack{1, 2, 3, 4, 5};
+    std::istringstream in;
+    std::ostringstream out;
     VM vm({
         Instruction(PUSH, 1),
         Instruction(PUSH, 2),
@@ -48,7 +59,7 @@ TEST_CASE("VM executes simple stack instructions", "[vm]") {
         Instruction(COPY, 1),
         Instruction(COPY, 3),
         ADD
-    });
+    }, in, out);
     vm.execute();
 
     SECTION("Simple stack instructions ouput correctly") {
@@ -62,10 +73,9 @@ TEST_CASE("VM executes simple stack instructions", "[vm]") {
 }
 
 TEST_CASE("Bottles instructions execute identically to parsed WS program", "[bottles]") {
-    std::istringstream in;
     compareProgramOutput({
 #include "../programs/bottles.instr"
-    }, parseProgram("programs/bottles.generated.ws"), in);
+    }, parseProgram("programs/bottles.generated.ws"), "");
 }
 
 TEST_CASE("Copy and slide run as expected", "[instructions]") {
@@ -79,4 +89,10 @@ TEST_CASE("Copy and slide run as expected", "[instructions]") {
         Instruction(COPY, 3), // Should push 3
         Instruction(SLIDE, 2)
     }, { 1, 2, 3, 4, 3 }, {});
+}
+
+TEST_CASE("Test programs", "[programs]") {
+    SECTION("hello-world.ws") {
+        testProgramOutput(parseProgram("programs/hello-world.ws"), "", "Hello, World!\n");
+    }
 }

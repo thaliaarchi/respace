@@ -5,7 +5,7 @@
 #include "vm.h"
 
 //#define DEBUG_STORE
-#define DEBUG_END
+//#define DEBUG_END
 
 namespace WS {
 
