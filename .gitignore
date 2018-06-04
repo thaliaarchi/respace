@@ -4,11 +4,13 @@ Debug
 *.vcxproj
 *.vcxproj.*
 
-# Generated files
+# C/C++ generated files
 *.o
 *.s
 *.out
-*.out.*
 .depend
 respace
 run_tests
+
+# Script generated files
+*.out.*

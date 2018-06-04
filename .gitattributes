@@ -1,2 +1,5 @@
 # Do not convert line endings in ws files
 *.ws    -text
+
+# GitHub Linguist configuration
+*.instr linguist-language=C++
