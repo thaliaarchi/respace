@@ -1,8 +1,5 @@
 # Project files
-Debug
 .vscode
-*.vcxproj
-*.vcxproj.*
 
 # C/C++ generated files
 *.o
@@ -14,3 +11,7 @@ run_tests
 
 # Script generated files
 *.out.*
+
+# Compiled binaries
+*.exe
+*.exe.manifest
